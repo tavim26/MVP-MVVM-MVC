@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="594.0" prefWidth="876.0" style="-fx-background-color: #FFF3E0;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.GalleryGUI">
+   <left>
+      <AnchorPane prefHeight="594.0" prefWidth="182.0" style="-fx-background-color: #CFD8DC;" BorderPane.alignment="CENTER">
+         <children>
+            <VBox alignment="CENTER" layoutX="19.0" layoutY="183.0" prefHeight="200.0" prefWidth="135.0" spacing="20.0">
+               <children>
+                  <Button fx:id="artistButton" mnemonicParsing="false" onAction="#clickArtistButton" prefHeight="46.0" prefWidth="99.0" style="-fx-background-radius: 10; -fx-background-color: #546E7A;" text="Artists" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="artworkButton" mnemonicParsing="false" onAction="#clickArtworkButton" prefHeight="46.0" prefWidth="96.0" style="-fx-background-radius: 10; -fx-background-color: #546E7A;" text="Artworks" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="17.0" />
+                     </font>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </left>
+   <center>
+      <AnchorPane prefHeight="594.0" prefWidth="715.0" style="-fx-background-color: #ECEFF1;;" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane fx:id="artistPane" layoutX="7.0" layoutY="6.0" prefHeight="582.0" prefWidth="682.0" style="-fx-background-color: #546E7A;">
+               <children>
+                  <HBox alignment="TOP_CENTER" layoutY="255.0" prefHeight="332.0" prefWidth="683.0" style="-fx-background-color: #CFD8DC;">
+                     <children>
+                        <TableView fx:id="artistTable" prefHeight="200.0" prefWidth="460.0">
+                          <columns>
+                            <TableColumn prefWidth="85.0" text="Name" />
+                            <TableColumn prefWidth="85.0" text="Birthday" />
+                            <TableColumn prefWidth="85.0" text="Birthplace" />
+                            <TableColumn prefWidth="85.0" text="Nationality" />
+                            <TableColumn prefWidth="120.0" text="Artwork List" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="13.0" layoutY="22.0" prefHeight="38.0" prefWidth="214.0" spacing="50.0">
+                     <children>
+                        <Label text="Name" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="nameTextField" prefHeight="2.0" prefWidth="122.0" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="13.0" layoutY="61.0" prefHeight="38.0" prefWidth="213.0" spacing="22.0">
+                     <children>
+                        <Label text="Birthplace" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="birthplaceTextField" prefHeight="20.0" prefWidth="122.0" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="13.0" layoutY="99.0" prefHeight="38.0" prefWidth="274.0" spacing="32.0">
+                     <children>
+                        <Label text="Birthday" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <DatePicker fx:id="birthdayDatePicker" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="13.0" layoutY="137.0" prefHeight="38.0" prefWidth="213.0" spacing="15.0">
+                     <children>
+                        <Label text="Nationality" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="nationalityTextField" prefHeight="20.0" prefWidth="122.0" />
+                     </children>
+                  </HBox>
+                  <ImageView fx:id="artistPhoto" fitHeight="150.0" fitWidth="164.0" layoutX="313.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true" />
+                  <Button fx:id="addArtistButton" layoutX="14.0" layoutY="200.0" mnemonicParsing="false" onAction="#clickAddArtist" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Add">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="editArtistButton" layoutX="89.0" layoutY="200.0" mnemonicParsing="false" onAction="#clickEditArtist" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Edit">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="deleteArtistButton" layoutX="164.0" layoutY="200.0" mnemonicParsing="false" onAction="#clickDeleteArtist" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Delete">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <TextField fx:id="searchArtistTextField" layoutX="424.0" layoutY="202.0" prefHeight="28.0" prefWidth="150.0" />
+                  <Button fx:id="searchArtistButton" layoutX="589.0" layoutY="199.0" mnemonicParsing="false" onAction="#clickSearchArtist" prefHeight="34.0" prefWidth="73.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Search">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="artworkPane" layoutX="5.0" layoutY="-1.0" prefHeight="594.0" prefWidth="686.0" style="-fx-background-color: #546E7A;" visible="false">
+               <children>
+                  <HBox alignment="TOP_CENTER" layoutY="270.0" prefHeight="322.0" prefWidth="689.0" style="-fx-background-color: #CFD8DC;">
+                     <children>
+                        <TableView fx:id="artworkTable" prefHeight="200.0" prefWidth="430.0">
+                          <columns>
+                            <TableColumn prefWidth="85.0" text="Title" />
+                             <TableColumn prefWidth="85.0" text="Artist Name" />
+                             <TableColumn prefWidth="85.0" text="Type" />
+                             <TableColumn prefWidth="85.0" text="Price" />
+                             <TableColumn prefWidth="85.0" text="Creation Year" />
+
+                          </columns>
+                        </TableView>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="26.0" prefHeight="38.0" prefWidth="202.0" spacing="15.0">
+                     <children>
+                        <Label text="Title" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="titleTextField" prefHeight="26.0" prefWidth="151.0" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="65.0" prefHeight="38.0" prefWidth="202.0" spacing="9.0">
+                     <children>
+                        <Label text="Artist" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="artistComboBox" prefWidth="150.0" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="103.0" prefHeight="38.0" prefWidth="202.0" spacing="14.0">
+                     <children>
+                        <Label text="Type" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="typeComboBox" prefWidth="150.0" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="141.0" prefHeight="38.0" prefWidth="202.0" spacing="14.0">
+                     <children>
+                        <Label text="Price" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="priceTextField" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="179.0" prefHeight="38.0" prefWidth="202.0" spacing="18.0">
+                     <children>
+                        <Label text="Year" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="yearTextField" />
+                     </children>
+                  </HBox>
+                  <TextField fx:id="searchArtworkTextField" layoutX="572.0" layoutY="168.0" prefHeight="26.0" prefWidth="107.0" />
+                  <Button fx:id="searchArtworkButton" layoutX="492.0" layoutY="164.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Search">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="addArtworkButton" layoutX="14.0" layoutY="224.0" mnemonicParsing="false" onAction="#clickAddArtwork" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Add">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="editArtworkButton" layoutX="95.0" layoutY="224.0" mnemonicParsing="false" onAction="#clickEditArtwork" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Edit">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="deleteArtworkButton" layoutX="175.0" layoutY="224.0" mnemonicParsing="false" onAction="#clickDeleteArtwork" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Delete">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Label layoutX="422.0" layoutY="35.0" text="Filter by artist" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="filterByArtistBox" layoutX="525.0" layoutY="32.0" prefWidth="150.0" />
+                  <Label layoutX="422.0" layoutY="74.0" text="Filter by type" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="filterByTypeBox" layoutX="525.0" layoutY="71.0" prefWidth="150.0" />
+                  <Label layoutX="422.0" layoutY="112.0" text="Filter by price" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="filterByPriceField" layoutX="526.0" layoutY="109.0" prefHeight="26.0" prefWidth="147.0" />
+                  <Button fx:id="viewPhotosButton" layoutX="252.0" layoutY="224.0" mnemonicParsing="false" onAction="#clickViewPhotos" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="View Photos">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="saveToCsvButton" layoutX="454.0" layoutY="224.0" mnemonicParsing="false" onAction="#clickSaveToCsv" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Save to csv">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="saveToDocButton" layoutX="571.0" layoutY="224.0" mnemonicParsing="false" onAction="#clickSaveToDoc" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Save to doc">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+               </children></AnchorPane>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
