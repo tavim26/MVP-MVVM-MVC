@@ -112,29 +112,31 @@ public class GalleryPresenter {
             validateNonNegative(price, "Prețul");
             Artwork existingArtwork = artworkRepo.findArtworkByTitle(oldTitle);
             if (existingArtwork == null) {
-                gui.showError("Artwork " + oldTitle + " does not exist");
+                gui.showError("Opera " + oldTitle + " nu există!");
                 return;
             }
             Artist newArtist = artistRepo.findArtistByName(artistName);
             if (newArtist == null) {
-                gui.showError("Artist  " + artistName + " does not exist");
+                gui.showError("Artistul " + artistName + " nu există!");
                 return;
             }
             Artwork updatedArtwork = new Artwork(newTitle, newArtist, type, price, creationYear);
             artworkRepo.updateArtwork(oldTitle, updatedArtwork, artistName);
 
-            Artist oldArtist = existingArtwork.getArtist();
+            // Reîncarcă artistul inițial pentru a păstra datele complete
+            Artist oldArtist = artistRepo.findArtistByName(existingArtwork.getArtist().getName());
             if (oldArtist != null && !oldArtist.getName().equals(artistName)) {
                 oldArtist.getArtworks().remove(existingArtwork);
+                // Actualizăm doar dacă este necesar (ex. dacă lista artworks s-a modificat)
                 artistRepo.updateArtist(oldArtist.getName(), oldArtist);
             }
             newArtist.addArtwork(updatedArtwork);
             artistRepo.updateArtist(newArtist.getName(), newArtist);
             refreshArtworks();
             refreshArtists();
-            gui.confirmSuccess(buildSuccessMessage("Artwork", oldTitle, "updated"));
+            gui.confirmSuccess(buildSuccessMessage("Opera", oldTitle, "actualizată"));
         } catch (SQLException e) {
-            gui.showError("Artwork Update Error " + e.getMessage());
+            gui.showError("Eroare la actualizarea operei: " + e.getMessage());
         }
     }
 
@@ -143,20 +145,20 @@ public class GalleryPresenter {
             validateNotEmpty(title, "Titlul operei");
             Artwork artwork = artworkRepo.findArtworkByTitle(title);
             if (artwork == null) {
-                gui.showError("Artwork " + title + " does not exist");
+                gui.showError("Opera " + title + " nu există!");
                 return;
             }
-            Artist artist = artwork.getArtist();
+            Artist artist = artistRepo.findArtistByName(artwork.getArtist().getName()); // Reîncarcă artistul
             if (artist != null) {
                 artist.getArtworks().remove(artwork);
-                artistRepo.updateArtist(artist.getName(), artist);
+                artistRepo.updateArtist(artist.getName(), artist); // Actualizează doar lista artworks
             }
             artworkRepo.deleteArtwork(title);
             refreshArtworks();
             refreshArtists();
-            gui.confirmSuccess(buildSuccessMessage("Artwork", title, "deleted"));
+            gui.confirmSuccess(buildSuccessMessage("Opera", title, "ștearsă"));
         } catch (SQLException e) {
-            gui.showError("Artwork Delete Error " + e.getMessage());
+            gui.showError("Eroare la ștergerea operei: " + e.getMessage());
         }
     }
 
