@@ -66,6 +66,11 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @FXML private ImageView artworkImage1;
     @FXML private ImageView artworkImage2;
 
+    @FXML private CheckBox addArtworkBox;  // Adăugat
+    @FXML private CheckBox editArtworkBox;
+
+    @FXML private CheckBox addArtistBox;
+    @FXML private CheckBox editArtistBox;
     // Constructor
     public GalleryGUI() {
         this.presenter = new GalleryPresenter(this);
@@ -108,9 +113,124 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             if (event.getCode() == javafx.scene.input.KeyCode.ENTER) handleFilter();
         });
 
+        // Legare căutare artiști
+        searchArtistTextField.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue.isEmpty()) {
+                presenter.refreshArtists();
+            } else {
+                presenter.searchArtistsByName(newValue);
+            }
+        });
+
+        // Legare căutare opere
+        searchArtworkTextField.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue.isEmpty()) {
+                presenter.refreshArtworks();
+            } else {
+                presenter.searchArtworksByTitle(newValue);
+            }
+        });
+
+
+
+        // Legare filtrare dinamică
+        filterByArtistBox.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
+                presenter.filterByArtistName(newValue);
+            } else {
+                presenter.refreshArtworks();
+            }
+        });
+
+        filterByTypeBox.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
+                presenter.filterByType(newValue);
+            } else {
+                presenter.refreshArtworks();
+            }
+        });
+
+        filterByPriceField.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue.isEmpty()) {
+                presenter.refreshArtworks();
+            } else {
+                double maxPrice = parseDouble(newValue, "Preț maxim");
+                if (maxPrice >= 0) {
+                    presenter.filterByMaxPrice(maxPrice);
+                }
+            }
+        });
+
         // Inițializare date
         presenter.refreshArtists();
         presenter.refreshArtworks();
+
+        // Configurare CheckBox-uri și starea inițială a câmpurilor
+        initializeArtistFieldsState();
+        initializeArtworkFieldsState();
+    }
+
+    // Inițializare stare câmpuri artist
+    private void initializeArtistFieldsState() {
+        nameTextField.setEditable(false);
+        birthplaceTextField.setEditable(false);
+        birthdayDatePicker.setEditable(false);
+        nationalityTextField.setEditable(false);
+
+        addArtistBox.setOnAction(event -> {
+            if (addArtistBox.isSelected()) {
+                editArtistBox.setSelected(false);
+                clearArtistFields();
+            }
+        });
+
+        editArtistBox.setOnAction(event -> {
+            if (editArtistBox.isSelected()) {
+                addArtistBox.setSelected(false);
+                nameTextField.setEditable(true);
+                birthplaceTextField.setEditable(true);
+                birthdayDatePicker.setEditable(true);
+                nationalityTextField.setEditable(true);
+            } else {
+                nameTextField.setEditable(false);
+                birthplaceTextField.setEditable(false);
+                birthdayDatePicker.setEditable(false);
+                nationalityTextField.setEditable(false);
+            }
+        });
+    }
+
+    // Inițializare stare câmpuri artwork
+    private void initializeArtworkFieldsState() {
+        titleTextField.setEditable(false);
+        artistComboBox.setDisable(true);
+        typeComboBox.setDisable(true);
+        priceTextField.setEditable(false);
+        yearTextField.setEditable(false);
+
+        addArtworkBox.setOnAction(event -> {
+            if (addArtworkBox.isSelected()) {
+                editArtworkBox.setSelected(false);
+                clearArtworkFields();
+            }
+        });
+
+        editArtworkBox.setOnAction(event -> {
+            if (editArtworkBox.isSelected()) {
+                addArtworkBox.setSelected(false);
+                titleTextField.setEditable(true);
+                artistComboBox.setDisable(false);
+                typeComboBox.setDisable(false);
+                priceTextField.setEditable(true);
+                yearTextField.setEditable(true);
+            } else {
+                titleTextField.setEditable(false);
+                artistComboBox.setDisable(true);
+                typeComboBox.setDisable(true);
+                priceTextField.setEditable(false);
+                yearTextField.setEditable(false);
+            }
+        });
     }
 
     // --- Configurare tabele ---
@@ -183,6 +303,11 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
 
     @FXML
     private void clickAddArtist() {
+        if (!addArtistBox.isSelected()) {
+            showError("Activați modul 'Add' pentru a adăuga un artist!");
+            return;
+        }
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
         File selectedFile = fileChooser.showOpenDialog(addArtistButton.getScene().getWindow());
@@ -200,11 +325,17 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         if (confirmAction("Are you sure you want to add artist?")) {
             presenter.addArtist(name, birthDate, birthPlace, nationality, photoPath);
             clearArtistFields();
+            addArtistBox.setSelected(false); // Dezactivează după adăugare
         }
     }
 
     @FXML
     private void clickEditArtist() {
+        if (!editArtistBox.isSelected()) {
+            showError("Activați modul 'Edit' pentru a edita un artist!");
+            return;
+        }
+
         Artist selectedArtist = artistTable.getSelectionModel().getSelectedItem();
         if (selectedArtist == null) {
             showError("Selectați un artist pentru a-l edita!");
@@ -221,6 +352,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         if (confirmAction("Are you sure you want to edit artist?")) {
             presenter.updateArtist(oldName, newName, birthDate, birthPlace, nationality, photoPath);
             clearArtistFields();
+            editArtistBox.setSelected(false); // Dezactivează după editare
         }
     }
 
@@ -240,6 +372,11 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
 
     @FXML
     private void clickAddArtwork() {
+        if (!addArtworkBox.isSelected()) {
+            showError("Activați modul 'Add' pentru a adăuga o operă!");
+            return;
+        }
+
         String title = titleTextField.getText().trim();
         String artistName = artistComboBox.getValue();
         String type = typeComboBox.getValue();
@@ -249,11 +386,17 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         if (price >= 0 && creationYear >= 0 && confirmAction("Are you sure you want to add artwork?")) {
             presenter.addArtwork(title, artistName, type, price, creationYear);
             clearArtworkFields();
+            addArtworkBox.setSelected(false); // Dezactivează după adăugare
         }
     }
 
     @FXML
     private void clickEditArtwork() {
+        if (!editArtworkBox.isSelected()) {
+            showError("Activați modul 'Edit' pentru a edita o operă!");
+            return;
+        }
+
         Artwork selectedArtwork = artworkTable.getSelectionModel().getSelectedItem();
         if (selectedArtwork == null) {
             showError("Selectați o operă pentru a o edita!");
@@ -270,20 +413,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         if (price >= 0 && creationYear >= 0 && confirmAction("Are you sure you want to edit artwork?")) {
             presenter.updateArtwork(oldTitle, newTitle, artistName, type, price, creationYear);
             clearArtworkFields();
-        }
-    }
-
-    @FXML
-    private void clickDeleteArtwork() {
-        Artwork selectedArtwork = artworkTable.getSelectionModel().getSelectedItem();
-        if (selectedArtwork == null) {
-            showError("Selectați o operă pentru a o șterge!");
-            return;
-        }
-
-        if (confirmAction("Are you sure you want to delete artwork?")) {
-            presenter.deleteArtwork(selectedArtwork.getTitle());
-            clearArtworkFields();
+            editArtworkBox.setSelected(false); // Dezactivează după editare
         }
     }
 
@@ -493,5 +623,8 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     }
 
     public void checkEditArtwork(ActionEvent actionEvent) {
+    }
+
+    public void clickDeleteArtwork(ActionEvent actionEvent) {
     }
 }

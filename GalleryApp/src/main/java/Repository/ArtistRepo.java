@@ -88,5 +88,22 @@ public class ArtistRepo {
     }
 
 
+    public List<Artist> searchByName(String name) throws SQLException {
+        String sql = "SELECT * FROM Artist WHERE name LIKE ?";
+        List<Artist> artists = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + name + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                artists.add(new Artist(rs.getString("name"), rs.getString("birth_date"),
+                        rs.getString("birth_place"), rs.getString("nationality"),
+                        rs.getString("photo")));
+            }
+        }
+        return artists;
+    }
+
+
 
 }

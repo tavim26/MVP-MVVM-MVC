@@ -263,6 +263,26 @@ public class GalleryPresenter {
         }
     }
 
+
+
+    public void searchArtistsByName(String name) {
+        try {
+            List<Artist> filteredArtists = artistRepo.searchByName(name);
+            gui.displayArtists(filteredArtists);
+        } catch (SQLException e) {
+            gui.showError("Eroare la căutarea artiștilor: " + e.getMessage());
+        }
+    }
+
+    public void searchArtworksByTitle(String title) {
+        try {
+            List<Artwork> filteredArtworks = artworkRepo.searchByTitle(title);
+            gui.displayArtworks(filteredArtworks);
+        } catch (SQLException e) {
+            gui.showError("Eroare la căutarea operelor: " + e.getMessage());
+        }
+    }
+
     // --- Metode ajutătoare ---
 
     public void refreshArtists() {

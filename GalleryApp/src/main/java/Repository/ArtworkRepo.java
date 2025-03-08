@@ -11,6 +11,8 @@ public class ArtworkRepo
 {
     private static final String DB_URL = "jdbc:sqlite:database.sqlite";
 
+    private ArtistRepo artistRepo;
+
 
     public void addArtwork(Artwork artwork, String artistName) throws SQLException
     {
@@ -194,6 +196,23 @@ public class ArtworkRepo
             }
         }
         return artworkTitles;
+    }
+
+
+    public List<Artwork> searchByTitle(String title) throws SQLException {
+        String sql = "SELECT * FROM Artwork WHERE title LIKE ?";
+        List<Artwork> artworks = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + title + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Artist artist = artistRepo.findArtistByName(rs.getString("name")); // Presupun că există
+                artworks.add(new Artwork(rs.getString("title"), artist, rs.getString("type"),
+                        rs.getDouble("price"), rs.getInt("creation_year")));
+            }
+        }
+        return artworks;
     }
 
 
