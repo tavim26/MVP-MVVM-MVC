@@ -1,21 +1,22 @@
 package Repository;
 
-
 import Model.Artwork;
 import Model.Artist;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArtworkRepo
-{
+public class ArtworkRepo {
     private static final String DB_URL = "jdbc:sqlite:database.sqlite";
 
     private ArtistRepo artistRepo;
 
+    // Constructor pentru inițializarea artistRepo
+    public ArtworkRepo() {
+        this.artistRepo = new ArtistRepo();
+    }
 
-    public void addArtwork(Artwork artwork, String artistName) throws SQLException
-    {
+    public void addArtwork(Artwork artwork, String artistName) throws SQLException {
         String sql = "INSERT INTO Artwork (title, id_artist, artwork_type, price, creation_year) " +
                 "VALUES (?, (SELECT id_artist FROM Artist WHERE name = ?), ?, ?, ?)";
 
@@ -30,9 +31,7 @@ public class ArtworkRepo
         }
     }
 
-
-    public List<Artwork> getAllArtworks() throws SQLException
-    {
+    public List<Artwork> getAllArtworks() throws SQLException {
         List<Artwork> artworks = new ArrayList<>();
         String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +
                 "FROM Artwork a JOIN Artist ar ON a.id_artist = ar.id_artist";
@@ -43,7 +42,7 @@ public class ArtworkRepo
             while (rs.next()) {
                 artworks.add(new Artwork(
                         rs.getString("title"),
-                        new Artist(rs.getString("artist_name"), "", "", "",""),
+                        new Artist(rs.getString("artist_name"), "", "", "", ""),
                         rs.getString("artwork_type"),
                         rs.getDouble("price"),
                         rs.getInt("creation_year")
@@ -53,9 +52,7 @@ public class ArtworkRepo
         return artworks;
     }
 
-
-    public void deleteArtwork(String title) throws SQLException
-    {
+    public void deleteArtwork(String title) throws SQLException {
         String sql = "DELETE FROM Artwork WHERE title = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -65,9 +62,7 @@ public class ArtworkRepo
         }
     }
 
-
-    public void updateArtwork(String oldTitle, Artwork updatedArtwork, String artistName) throws SQLException
-    {
+    public void updateArtwork(String oldTitle, Artwork updatedArtwork, String artistName) throws SQLException {
         String sql = "UPDATE Artwork SET title = ?, id_artist = (SELECT id_artist FROM Artist WHERE name = ?), " +
                 "artwork_type = ?, price = ?, creation_year = ? WHERE title = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -82,9 +77,7 @@ public class ArtworkRepo
         }
     }
 
-
-    public Artwork findArtworkByTitle(String title) throws SQLException
-    {
+    public Artwork findArtworkByTitle(String title) throws SQLException {
         String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +
                 "FROM Artwork a JOIN Artist ar ON a.id_artist = ar.id_artist WHERE a.title = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -93,16 +86,13 @@ public class ArtworkRepo
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Artwork(rs.getString("title"),
-                        new Artist(rs.getString("artist_name"), "", "", "",""),
+                        new Artist(rs.getString("artist_name"), "", "", "", ""),
                         rs.getString("artwork_type"), rs.getDouble("price"),
                         rs.getInt("creation_year"));
             }
             return null;
         }
     }
-
-
-
 
     public List<Artwork> filterByArtistName(String artistName) throws SQLException {
         String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +
@@ -127,9 +117,6 @@ public class ArtworkRepo
         }
     }
 
-
-
-
     public List<Artwork> filterByType(String type) throws SQLException {
         String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +
                 "FROM Artwork a JOIN Artist ar ON a.id_artist = ar.id_artist " +
@@ -152,8 +139,6 @@ public class ArtworkRepo
             return artworks;
         }
     }
-
-
 
     public List<Artwork> filterByMaxPrice(double maxPrice) throws SQLException {
         String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +
@@ -178,8 +163,6 @@ public class ArtworkRepo
         }
     }
 
-
-
     public List<String> getArtworksByArtist(String artistName) throws SQLException {
         String sql = "SELECT a.title " +
                 "FROM Artwork a " +
@@ -198,27 +181,25 @@ public class ArtworkRepo
         return artworkTitles;
     }
 
-
     public List<Artwork> searchByTitle(String title) throws SQLException {
-        String sql = "SELECT * FROM Artwork WHERE title LIKE ?";
+        String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +
+                "FROM Artwork a JOIN Artist ar ON a.id_artist = ar.id_artist WHERE a.title LIKE ?";
         List<Artwork> artworks = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, "%" + title + "%");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Artist artist = artistRepo.findArtistByName(rs.getString("name")); // Presupun că există
-                artworks.add(new Artwork(rs.getString("title"), artist, rs.getString("type"),
-                        rs.getDouble("price"), rs.getInt("creation_year")));
+                Artist artist = artistRepo.findArtistByName(rs.getString("artist_name")); // Corectat la artist_name
+                artworks.add(new Artwork(
+                        rs.getString("title"),
+                        artist, // Folosim artistul complet din baza de date
+                        rs.getString("artwork_type"),
+                        rs.getDouble("price"),
+                        rs.getInt("creation_year")
+                ));
             }
         }
         return artworks;
     }
-
-
-
-
-
-
 }
-

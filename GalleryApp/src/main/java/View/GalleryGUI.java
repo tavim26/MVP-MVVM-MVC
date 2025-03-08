@@ -18,6 +18,7 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -60,17 +61,18 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @FXML private Button addArtworkButton;
     @FXML private Button editArtworkButton;
     @FXML private Button deleteArtworkButton;
-    @FXML private Button addImageButton; // Actualizat din viewPhotosButton
+    @FXML private Button addImageButton;
     @FXML private Button saveToCsvButton;
     @FXML private Button saveToDocButton;
     @FXML private ImageView artworkImage1;
     @FXML private ImageView artworkImage2;
 
-    @FXML private CheckBox addArtworkBox;  // Adăugat
+    @FXML private CheckBox addArtworkBox;
     @FXML private CheckBox editArtworkBox;
 
     @FXML private CheckBox addArtistBox;
     @FXML private CheckBox editArtistBox;
+
     // Constructor
     public GalleryGUI() {
         this.presenter = new GalleryPresenter(this);
@@ -106,13 +108,6 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         populateTypeComboBox();
         populateFilterBoxes();
 
-        // Legare filtrare
-        filterByArtistBox.setOnAction(event -> handleFilter());
-        filterByTypeBox.setOnAction(event -> handleFilter());
-        filterByPriceField.setOnKeyPressed(event -> {
-            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) handleFilter();
-        });
-
         // Legare căutare artiști
         searchArtistTextField.textProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue.isEmpty()) {
@@ -131,106 +126,54 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             }
         });
 
-
-
-        // Legare filtrare dinamică
-        filterByArtistBox.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null && !newValue.isEmpty()) {
-                presenter.filterByArtistName(newValue);
-            } else {
-                presenter.refreshArtworks();
-            }
-        });
-
-        filterByTypeBox.valueProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue != null && !newValue.isEmpty()) {
-                presenter.filterByType(newValue);
-            } else {
-                presenter.refreshArtworks();
-            }
-        });
-
-        filterByPriceField.textProperty().addListener((obs, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
-                presenter.refreshArtworks();
-            } else {
-                double maxPrice = parseDouble(newValue, "Preț maxim");
-                if (maxPrice >= 0) {
-                    presenter.filterByMaxPrice(maxPrice);
-                }
-            }
-        });
+        // Legare filtrare combinată
+        filterByArtistBox.valueProperty().addListener((obs, oldValue, newValue) -> applyFilters());
+        filterByTypeBox.valueProperty().addListener((obs, oldValue, newValue) -> applyFilters());
+        filterByPriceField.textProperty().addListener((obs, oldValue, newValue) -> applyFilters());
 
         // Inițializare date
         presenter.refreshArtists();
         presenter.refreshArtworks();
-
-        // Configurare CheckBox-uri și starea inițială a câmpurilor
+        applyFilters(); // Aplicăm filtrele inițial pentru a afișa corect operele
         initializeArtistFieldsState();
         initializeArtworkFieldsState();
     }
 
-    // Inițializare stare câmpuri artist
-    private void initializeArtistFieldsState() {
-        nameTextField.setEditable(false);
-        birthplaceTextField.setEditable(false);
-        birthdayDatePicker.setEditable(false);
-        nationalityTextField.setEditable(false);
+    // Metodă pentru aplicarea filtrelor combinate
+    private void applyFilters() {
+        String artistName = filterByArtistBox.getValue();
+        String type = filterByTypeBox.getValue();
+        String priceText = filterByPriceField.getText().trim();
 
-        addArtistBox.setOnAction(event -> {
-            if (addArtistBox.isSelected()) {
-                editArtistBox.setSelected(false);
-                clearArtistFields();
+        // Începe cu toate operele
+        List<Artwork> filteredArtworks = new ArrayList<>(presenter.getArtworksTable());
+
+        // Filtrare după artist
+        if (artistName != null && !artistName.equals("All")) {
+            filteredArtworks = filteredArtworks.stream()
+                    .filter(artwork -> artwork.getArtist().getName().equals(artistName))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrare după tip
+        if (type != null && !type.equals("All")) {
+            filteredArtworks = filteredArtworks.stream()
+                    .filter(artwork -> artwork.getType().equals(type))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrare după preț
+        if (!priceText.isEmpty()) {
+            double maxPrice = parseDouble(priceText, "Preț maxim");
+            if (maxPrice >= 0) {
+                filteredArtworks = filteredArtworks.stream()
+                        .filter(artwork -> artwork.getPrice() < maxPrice)
+                        .collect(Collectors.toList());
             }
-        });
+        }
 
-        editArtistBox.setOnAction(event -> {
-            if (editArtistBox.isSelected()) {
-                addArtistBox.setSelected(false);
-                nameTextField.setEditable(true);
-                birthplaceTextField.setEditable(true);
-                birthdayDatePicker.setEditable(true);
-                nationalityTextField.setEditable(true);
-            } else {
-                nameTextField.setEditable(false);
-                birthplaceTextField.setEditable(false);
-                birthdayDatePicker.setEditable(false);
-                nationalityTextField.setEditable(false);
-            }
-        });
-    }
-
-    // Inițializare stare câmpuri artwork
-    private void initializeArtworkFieldsState() {
-        titleTextField.setEditable(false);
-        artistComboBox.setDisable(true);
-        typeComboBox.setDisable(true);
-        priceTextField.setEditable(false);
-        yearTextField.setEditable(false);
-
-        addArtworkBox.setOnAction(event -> {
-            if (addArtworkBox.isSelected()) {
-                editArtworkBox.setSelected(false);
-                clearArtworkFields();
-            }
-        });
-
-        editArtworkBox.setOnAction(event -> {
-            if (editArtworkBox.isSelected()) {
-                addArtworkBox.setSelected(false);
-                titleTextField.setEditable(true);
-                artistComboBox.setDisable(false);
-                typeComboBox.setDisable(false);
-                priceTextField.setEditable(true);
-                yearTextField.setEditable(true);
-            } else {
-                titleTextField.setEditable(false);
-                artistComboBox.setDisable(true);
-                typeComboBox.setDisable(true);
-                priceTextField.setEditable(false);
-                yearTextField.setEditable(false);
-            }
-        });
+        // Afișează rezultatul filtrat
+        displayFilteredArtworks(filteredArtworks);
     }
 
     // --- Configurare tabele ---
@@ -273,8 +216,11 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     // --- Popularea combo box-urilor ---
 
     private void populateArtistComboBox() {
-        artistComboBox.setItems(FXCollections.observableArrayList(presenter.getArtistsTable().stream()
-                .map(Artist::getName).collect(Collectors.toList())));
+        List<String> artistNames = new ArrayList<>(presenter.getArtistsTable().stream()
+                .map(Artist::getName).collect(Collectors.toList()));
+        artistNames.add(0, "All"); // Adaugă "All" ca prim element
+        artistComboBox.setItems(FXCollections.observableArrayList(artistNames));
+        artistComboBox.setValue("All"); // Setează implicit pe "All"
     }
 
     private void populateTypeComboBox() {
@@ -282,9 +228,16 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     }
 
     private void populateFilterBoxes() {
-        filterByArtistBox.setItems(FXCollections.observableArrayList(presenter.getArtistsTable().stream()
-                .map(Artist::getName).collect(Collectors.toList())));
-        filterByTypeBox.getItems().addAll("Painting", "Sculpture", "Photography");
+        List<String> artistNames = new ArrayList<>(presenter.getArtistsTable().stream()
+                .map(Artist::getName).collect(Collectors.toList()));
+        artistNames.add(0, "All"); // Adaugă "All" ca prim element
+        filterByArtistBox.setItems(FXCollections.observableArrayList(artistNames));
+        filterByArtistBox.setValue("All"); // Setează implicit pe "All"
+
+        List<String> types = new ArrayList<>(List.of("Painting", "Sculpture", "Photography"));
+        types.add(0, "All"); // Adaugă "All" ca prim element
+        filterByTypeBox.setItems(FXCollections.observableArrayList(types));
+        filterByTypeBox.setValue("All"); // Setează implicit pe "All"
     }
 
     // --- Acțiuni butoane ---
@@ -418,7 +371,21 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     }
 
     @FXML
-    private void clickAddImage() { // Actualizat din clickViewPhotos
+    private void clickDeleteArtwork() {
+        Artwork selectedArtwork = artworkTable.getSelectionModel().getSelectedItem();
+        if (selectedArtwork == null) {
+            showError("Selectați o operă pentru a o șterge!");
+            return;
+        }
+
+        if (confirmAction("Are you sure you want to delete artwork?")) {
+            presenter.deleteArtwork(selectedArtwork.getTitle());
+            clearArtworkFields();
+        }
+    }
+
+    @FXML
+    private void clickAddImage() {
         Artwork selectedArtwork = artworkTable.getSelectionModel().getSelectedItem();
         if (selectedArtwork == null) {
             showError("Selectați o operă pentru a adăuga o imagine!");
@@ -460,22 +427,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
 
     @FXML
     private void handleFilter() {
-        String artistName = filterByArtistBox.getValue();
-        String type = filterByTypeBox.getValue();
-        String priceText = filterByPriceField.getText().trim();
-
-        if (artistName != null && !artistName.isEmpty()) {
-            presenter.filterByArtistName(artistName);
-        } else if (type != null && !type.isEmpty()) {
-            presenter.filterByType(type);
-        } else if (!priceText.isEmpty()) {
-            double maxPrice = parseDouble(priceText, "Preț maxim");
-            if (maxPrice >= 0) {
-                presenter.filterByMaxPrice(maxPrice);
-            }
-        } else {
-            presenter.refreshArtworks(); // Resetează la toate operele dacă nu există filtru
-        }
+        applyFilters(); // Folosim metoda combinată
     }
 
     // --- Metode ajutătoare ---
@@ -560,8 +512,8 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @Override
     public void displayArtists(List<Artist> artists) {
         artistTable.setItems(FXCollections.observableArrayList(artists));
-        populateArtistComboBox();  // Re-populează artistComboBox
-        populateFilterBoxes();     // Re-populează filterByArtistBox
+        populateArtistComboBox();
+        populateFilterBoxes();
     }
 
     @Override
@@ -581,6 +533,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @Override
     public void displayArtworks(List<Artwork> artworks) {
         artworkTable.setItems(FXCollections.observableArrayList(artworks));
+        // Nu reaplicăm filtrele aici pentru a evita ciclul infinit
     }
 
     @Override
@@ -613,6 +566,69 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         alert.showAndWait();
     }
 
+    // Inițializare stare câmpuri artist
+    private void initializeArtistFieldsState() {
+        nameTextField.setEditable(false);
+        birthplaceTextField.setEditable(false);
+        birthdayDatePicker.setEditable(false);
+        nationalityTextField.setEditable(false);
+
+        addArtistBox.setOnAction(event -> {
+            if (addArtistBox.isSelected()) {
+                editArtistBox.setSelected(false);
+                clearArtistFields();
+            }
+        });
+
+        editArtistBox.setOnAction(event -> {
+            if (editArtistBox.isSelected()) {
+                addArtistBox.setSelected(false);
+                nameTextField.setEditable(true);
+                birthplaceTextField.setEditable(true);
+                birthdayDatePicker.setEditable(true);
+                nationalityTextField.setEditable(true);
+            } else {
+                nameTextField.setEditable(false);
+                birthplaceTextField.setEditable(false);
+                birthdayDatePicker.setEditable(false);
+                nationalityTextField.setEditable(false);
+            }
+        });
+    }
+
+    // Inițializare stare câmpuri artwork
+    private void initializeArtworkFieldsState() {
+        titleTextField.setEditable(false);
+        artistComboBox.setDisable(true);
+        typeComboBox.setDisable(true);
+        priceTextField.setEditable(false);
+        yearTextField.setEditable(false);
+
+        addArtworkBox.setOnAction(event -> {
+            if (addArtworkBox.isSelected()) {
+                editArtworkBox.setSelected(false);
+                clearArtworkFields();
+            }
+        });
+
+        editArtworkBox.setOnAction(event -> {
+            if (editArtworkBox.isSelected()) {
+                addArtworkBox.setSelected(false);
+                titleTextField.setEditable(true);
+                artistComboBox.setDisable(false);
+                typeComboBox.setDisable(false);
+                priceTextField.setEditable(true);
+                yearTextField.setEditable(true);
+            } else {
+                titleTextField.setEditable(false);
+                artistComboBox.setDisable(true);
+                typeComboBox.setDisable(true);
+                priceTextField.setEditable(false);
+                yearTextField.setEditable(false);
+            }
+        });
+    }
+
     public void checkAddArtist(ActionEvent actionEvent) {
     }
 
@@ -625,6 +641,5 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     public void checkEditArtwork(ActionEvent actionEvent) {
     }
 
-    public void clickDeleteArtwork(ActionEvent actionEvent) {
-    }
+
 }
