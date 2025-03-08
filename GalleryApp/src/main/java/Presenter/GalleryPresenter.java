@@ -21,7 +21,7 @@ public class GalleryPresenter {
     private final ObservableList<Artist> artistsTable;
     private final ObservableList<Artwork> artworksTable;
 
-    // Constructor
+
     public GalleryPresenter(IGalleryGUI gui) {
         if (gui == null) {
             throw new IllegalArgumentException("Interfața GUI nu poate fi null!");
@@ -35,7 +35,9 @@ public class GalleryPresenter {
 
     }
 
-    // --- Metode pentru artiști ---
+
+
+
 
     public void addArtist(String name, String birthDate, String birthPlace, String nationality, String photo) {
         try {
@@ -72,25 +74,15 @@ public class GalleryPresenter {
         }
     }
 
-    public void searchArtist(String name) {
-        try {
-            validateNotEmpty(name, "Numele pentru căutare");
-            Artist artist = artistRepo.findArtistByName(name);
-            if (artist != null) {
-                gui.displayArtistSearchResult(artist);
-            } else {
-                gui.showError("Artistul cu numele " + name + " nu a fost găsit.");
-            }
-        } catch (SQLException e) {
-            gui.showError("Eroare la căutarea artistului: " + e.getMessage());
-        }
-    }
 
     public List<String> getArtworksByArtist(String artistName) throws SQLException {
         return artworkRepo.getArtworksByArtist(artistName);
     }
 
-    // --- Metode pentru opere de artă ---
+
+
+
+
 
     public void addArtwork(String title, String artistName, String type, double price, int creationYear) {
         try {
@@ -130,7 +122,7 @@ public class GalleryPresenter {
             }
             Artwork updatedArtwork = new Artwork(newTitle, newArtist, type, price, creationYear);
             artworkRepo.updateArtwork(oldTitle, updatedArtwork, artistName);
-            // Gestionăm relația bidirecțională prin Model
+
             Artist oldArtist = existingArtwork.getArtist();
             if (oldArtist != null && !oldArtist.getName().equals(artistName)) {
                 oldArtist.getArtworks().remove(existingArtwork);
@@ -168,49 +160,10 @@ public class GalleryPresenter {
         }
     }
 
-    public void searchArtwork(String title) {
-        try {
-            validateNotEmpty(title, "Titlul pentru căutare");
-            Artwork artwork = artworkRepo.findArtworkByTitle(title);
-            if (artwork != null) {
-                gui.displayArtworkSearchResult(artwork);
-            } else {
-                gui.showError("Opera cu titlul " + title + " nu a fost găsită.");
-            }
-        } catch (SQLException e) {
-            gui.showError("Eroare la căutarea operei: " + e.getMessage());
-        }
-    }
 
-    public void filterByArtistName(String artistName) {
-        try {
-            validateNotEmpty(artistName, "Numele artistului");
-            artworksTable.setAll(artworkRepo.filterByArtistName(artistName));
-            gui.displayFilteredArtworks(artworksTable);
-        } catch (SQLException e) {
-            gui.showError("Eroare la filtrarea operelor după artist: " + e.getMessage());
-        }
-    }
 
-    public void filterByType(String type) {
-        try {
-            validateNotEmpty(type, "Tipul operei");
-            artworksTable.setAll(artworkRepo.filterByType(type));
-            gui.displayFilteredArtworks(artworksTable);
-        } catch (SQLException e) {
-            gui.showError("Eroare la filtrarea operelor după tip: " + e.getMessage());
-        }
-    }
 
-    public void filterByMaxPrice(double maxPrice) {
-        try {
-            validateNonNegative(maxPrice, "Prețul maxim");
-            artworksTable.setAll(artworkRepo.filterByMaxPrice(maxPrice));
-            gui.displayFilteredArtworks(artworksTable);
-        } catch (SQLException e) {
-            gui.showError("Eroare la filtrarea operelor după preț: " + e.getMessage());
-        }
-    }
+
 
     public void addArtworkImage(String artworkTitle, String imagePath) {
         try {
@@ -224,10 +177,13 @@ public class GalleryPresenter {
         }
     }
 
-    // În GalleryPresenter.java
+
     public List<ArtworkImage> getImagesForArtwork(String artworkTitle) throws SQLException {
         return artworkImageRepo.getImagesByArtwork(artworkTitle);
     }
+
+
+
 
     public void exportArtworksToCSV(String filePath) {
         try {
@@ -246,6 +202,8 @@ public class GalleryPresenter {
         }
     }
 
+
+
     public void exportArtworksToText(String filePath) { // Redenumit pentru claritate
         try {
             validateNotEmpty(filePath, "Calea către fișier");
@@ -262,6 +220,8 @@ public class GalleryPresenter {
             gui.showError("Eroare la exportul în text: " + e.getMessage());
         }
     }
+
+
 
 
 
@@ -283,7 +243,16 @@ public class GalleryPresenter {
         }
     }
 
-    // --- Metode ajutătoare ---
+
+
+
+
+
+
+
+
+
+
 
     public void refreshArtists() {
         try {
@@ -321,7 +290,7 @@ public class GalleryPresenter {
         return String.format("%s %s a fost %s cu succes!", entity, name, action);
     }
 
-    private String escapeCSV(String value) { // Pentru a preveni probleme cu virgulele în CSV
+    private String escapeCSV(String value) {
         if (value.contains(",")) {
             return "\"" + value + "\"";
         }

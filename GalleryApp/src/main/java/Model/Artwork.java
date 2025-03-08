@@ -23,7 +23,7 @@ public class Artwork {
         this.images = new ArrayList<>();
     }
 
-    // Getteri și Setteri
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 

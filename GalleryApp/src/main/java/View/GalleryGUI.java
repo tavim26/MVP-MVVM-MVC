@@ -28,13 +28,11 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
 
     private final GalleryPresenter presenter;
 
-    // Componente din FXML pentru navigare
     @FXML private Button artistButton;
     @FXML private Button artworkButton;
     @FXML private AnchorPane artistPane;
     @FXML private AnchorPane artworkPane;
 
-    // Componente pentru artiști
     @FXML private TableView<Artist> artistTable;
     @FXML private TextField nameTextField;
     @FXML private TextField birthplaceTextField;
@@ -46,7 +44,6 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @FXML private Button deleteArtistButton;
     @FXML private TextField searchArtistTextField;
 
-    // Componente pentru opere de artă
     @FXML private TableView<Artwork> artworkTable;
     @FXML private TextField titleTextField;
     @FXML private ComboBox<String> artistComboBox;
@@ -73,20 +70,20 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @FXML private CheckBox addArtistBox;
     @FXML private CheckBox editArtistBox;
 
-    // Constructor
-    public GalleryGUI() {
+
+    public GalleryGUI()
+    {
         this.presenter = new GalleryPresenter(this);
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Configurare navigare
+    public void initialize(URL url, ResourceBundle resourceBundle)
+    {
         artistButton.setOnAction(event -> clickArtistButton());
         artworkButton.setOnAction(event -> clickArtworkButton());
         artistPane.setVisible(true);
         artworkPane.setVisible(false);
 
-        // Configurare tabel artiști
         configureArtistTable();
         artistTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -94,7 +91,6 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             }
         });
 
-        // Configurare tabel opere de artă
         configureArtworkTable();
         artworkTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -103,12 +99,10 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             }
         });
 
-        // Populare combo box-uri
         populateArtistComboBox();
         populateTypeComboBox();
         populateFilterBoxes();
 
-        // Legare căutare artiști
         searchArtistTextField.textProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue.isEmpty()) {
                 presenter.refreshArtists();
@@ -117,7 +111,6 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             }
         });
 
-        // Legare căutare opere
         searchArtworkTextField.textProperty().addListener((obs, oldValue, newValue) -> {
             if (newValue.isEmpty()) {
                 presenter.refreshArtworks();
@@ -126,43 +119,37 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             }
         });
 
-        // Legare filtrare combinată
         filterByArtistBox.valueProperty().addListener((obs, oldValue, newValue) -> applyFilters());
         filterByTypeBox.valueProperty().addListener((obs, oldValue, newValue) -> applyFilters());
         filterByPriceField.textProperty().addListener((obs, oldValue, newValue) -> applyFilters());
 
-        // Inițializare date
         presenter.refreshArtists();
         presenter.refreshArtworks();
-        applyFilters(); // Aplicăm filtrele inițial pentru a afișa corect operele
+        applyFilters();
         initializeArtistFieldsState();
         initializeArtworkFieldsState();
     }
 
-    // Metodă pentru aplicarea filtrelor combinate
-    private void applyFilters() {
+    private void applyFilters()
+    {
         String artistName = filterByArtistBox.getValue();
         String type = filterByTypeBox.getValue();
         String priceText = filterByPriceField.getText().trim();
 
-        // Începe cu toate operele
         List<Artwork> filteredArtworks = new ArrayList<>(presenter.getArtworksTable());
 
-        // Filtrare după artist
         if (artistName != null && !artistName.equals("All")) {
             filteredArtworks = filteredArtworks.stream()
                     .filter(artwork -> artwork.getArtist().getName().equals(artistName))
                     .collect(Collectors.toList());
         }
 
-        // Filtrare după tip
         if (type != null && !type.equals("All")) {
             filteredArtworks = filteredArtworks.stream()
                     .filter(artwork -> artwork.getType().equals(type))
                     .collect(Collectors.toList());
         }
 
-        // Filtrare după preț
         if (!priceText.isEmpty()) {
             double maxPrice = parseDouble(priceText, "Preț maxim");
             if (maxPrice >= 0) {
@@ -172,11 +159,10 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             }
         }
 
-        // Afișează rezultatul filtrat
         displayFilteredArtworks(filteredArtworks);
     }
 
-    // --- Configurare tabele ---
+
 
     private void configureArtistTable() {
         TableColumn<Artist, String> nameColumn = (TableColumn<Artist, String>) artistTable.getColumns().get(0);
@@ -213,14 +199,18 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         creationYearColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getCreationYear())));
     }
 
-    // --- Popularea combo box-urilor ---
 
-    private void populateArtistComboBox() {
+
+
+
+
+    private void populateArtistComboBox()
+    {
         List<String> artistNames = new ArrayList<>(presenter.getArtistsTable().stream()
                 .map(Artist::getName).collect(Collectors.toList()));
-        artistNames.add(0, "All"); // Adaugă "All" ca prim element
+        artistNames.add(0, "All");
         artistComboBox.setItems(FXCollections.observableArrayList(artistNames));
-        artistComboBox.setValue("All"); // Setează implicit pe "All"
+        artistComboBox.setValue("All");
     }
 
     private void populateTypeComboBox() {
@@ -230,17 +220,20 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     private void populateFilterBoxes() {
         List<String> artistNames = new ArrayList<>(presenter.getArtistsTable().stream()
                 .map(Artist::getName).collect(Collectors.toList()));
-        artistNames.add(0, "All"); // Adaugă "All" ca prim element
+        artistNames.add(0, "All");
         filterByArtistBox.setItems(FXCollections.observableArrayList(artistNames));
-        filterByArtistBox.setValue("All"); // Setează implicit pe "All"
+        filterByArtistBox.setValue("All");
 
         List<String> types = new ArrayList<>(List.of("Painting", "Sculpture", "Photography"));
-        types.add(0, "All"); // Adaugă "All" ca prim element
+        types.add(0, "All");
         filterByTypeBox.setItems(FXCollections.observableArrayList(types));
-        filterByTypeBox.setValue("All"); // Setează implicit pe "All"
+        filterByTypeBox.setValue("All");
     }
 
-    // --- Acțiuni butoane ---
+
+
+
+
 
     @FXML
     private void clickArtistButton() {
@@ -323,6 +316,12 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         }
     }
 
+
+
+
+
+
+
     @FXML
     private void clickAddArtwork() {
         if (!addArtworkBox.isSelected()) {
@@ -366,7 +365,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         if (price >= 0 && creationYear >= 0 && confirmAction("Are you sure you want to edit artwork?")) {
             presenter.updateArtwork(oldTitle, newTitle, artistName, type, price, creationYear);
             clearArtworkFields();
-            editArtworkBox.setSelected(false); // Dezactivează după editare
+            editArtworkBox.setSelected(false);
         }
     }
 
@@ -383,6 +382,10 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             clearArtworkFields();
         }
     }
+
+
+
+
 
     @FXML
     private void clickAddImage() {
@@ -423,14 +426,13 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         }
     }
 
-    // --- Filtrare ---
 
-    @FXML
-    private void handleFilter() {
-        applyFilters(); // Folosim metoda combinată
-    }
 
-    // --- Metode ajutătoare ---
+
+
+
+
+    //metode ajutatoare
 
     private void populateArtistFields(Artist artist) {
         nameTextField.setText(artist.getName());
@@ -507,7 +509,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         return result.isPresent() && result.get() == ButtonType.YES;
     }
 
-    // --- Implementare IGalleryGUI ---
+
 
     @Override
     public void displayArtists(List<Artist> artists) {
@@ -533,7 +535,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @Override
     public void displayArtworks(List<Artwork> artworks) {
         artworkTable.setItems(FXCollections.observableArrayList(artworks));
-        // Nu reaplicăm filtrele aici pentru a evita ciclul infinit
+
     }
 
     @Override
@@ -566,7 +568,6 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         alert.showAndWait();
     }
 
-    // Inițializare stare câmpuri artist
     private void initializeArtistFieldsState() {
         nameTextField.setEditable(false);
         birthplaceTextField.setEditable(false);
@@ -596,7 +597,6 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         });
     }
 
-    // Inițializare stare câmpuri artwork
     private void initializeArtworkFieldsState() {
         titleTextField.setEditable(false);
         artistComboBox.setDisable(true);
