@@ -180,7 +180,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
                 List<String> titles = presenter.getArtworksByArtist(cellData.getValue().getName());
                 return new SimpleStringProperty(String.join(", ", titles));
             } catch (Exception e) {
-                return new SimpleStringProperty("Eroare la încărcare");
+                return new SimpleStringProperty("Eroare la incarcare");
             }
         });
     }
@@ -250,7 +250,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @FXML
     private void clickAddArtist() {
         if (!addArtistBox.isSelected()) {
-            showError("Activați modul 'Add' pentru a adăuga un artist!");
+            showError("Activate Add checkbox!");
             return;
         }
 
@@ -278,13 +278,13 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @FXML
     private void clickEditArtist() {
         if (!editArtistBox.isSelected()) {
-            showError("Activați modul 'Edit' pentru a edita un artist!");
+            showError("Activate Edit checkbox!");
             return;
         }
 
         Artist selectedArtist = artistTable.getSelectionModel().getSelectedItem();
         if (selectedArtist == null) {
-            showError("Selectați un artist pentru a-l edita!");
+            showError("Select and artist first!");
             return;
         }
 
@@ -298,7 +298,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         if (confirmAction("Are you sure you want to edit artist?")) {
             presenter.updateArtist(oldName, newName, birthDate, birthPlace, nationality, photoPath);
             clearArtistFields();
-            editArtistBox.setSelected(false); // Dezactivează după editare
+            editArtistBox.setSelected(false);
         }
     }
 
@@ -306,7 +306,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     private void clickDeleteArtist() {
         Artist selectedArtist = artistTable.getSelectionModel().getSelectedItem();
         if (selectedArtist == null) {
-            showError("Selectați un artist pentru a-l șterge!");
+            showError("Select an artist first!");
             return;
         }
 
@@ -325,7 +325,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @FXML
     private void clickAddArtwork() {
         if (!addArtworkBox.isSelected()) {
-            showError("Activați modul 'Add' pentru a adăuga o operă!");
+            showError("Activate Add checkbox");
             return;
         }
 
@@ -338,20 +338,20 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         if (price >= 0 && creationYear >= 0 && confirmAction("Are you sure you want to add artwork?")) {
             presenter.addArtwork(title, artistName, type, price, creationYear);
             clearArtworkFields();
-            addArtworkBox.setSelected(false); // Dezactivează după adăugare
+            addArtworkBox.setSelected(false);
         }
     }
 
     @FXML
     private void clickEditArtwork() {
         if (!editArtworkBox.isSelected()) {
-            showError("Activați modul 'Edit' pentru a edita o operă!");
+            showError("Activate Edit checkbox!");
             return;
         }
 
         Artwork selectedArtwork = artworkTable.getSelectionModel().getSelectedItem();
         if (selectedArtwork == null) {
-            showError("Selectați o operă pentru a o edita!");
+            showError("Select an artwork first!");
             return;
         }
 
@@ -373,7 +373,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     private void clickDeleteArtwork() {
         Artwork selectedArtwork = artworkTable.getSelectionModel().getSelectedItem();
         if (selectedArtwork == null) {
-            showError("Selectați o operă pentru a o șterge!");
+            showError("Select and artwork first!");
             return;
         }
 
@@ -391,7 +391,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     private void clickAddImage() {
         Artwork selectedArtwork = artworkTable.getSelectionModel().getSelectedItem();
         if (selectedArtwork == null) {
-            showError("Selectați o operă pentru a adăuga o imagine!");
+            showError("Select an artwork first!");
             return;
         }
 
@@ -402,7 +402,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         if (selectedFile != null) {
             String imagePath = selectedFile.toURI().toString();
             presenter.addArtworkImage(selectedArtwork.getTitle(), imagePath);
-            displayArtworkImages(selectedArtwork); // Reîmprospătează imaginile
+            displayArtworkImages(selectedArtwork);
         }
     }
 
@@ -474,7 +474,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             artworkImage1.setImage(images.size() > 0 ? new Image(images.get(0).getImagePath()) : null);
             artworkImage2.setImage(images.size() > 1 ? new Image(images.get(1).getImagePath()) : null);
         } catch (SQLException e) {
-            showError("Eroare la încărcarea imaginilor: " + e.getMessage());
+            showError("Load image error " + e.getMessage());
         }
     }
 
@@ -482,12 +482,12 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         try {
             double result = Double.parseDouble(value.trim());
             if (result < 0) {
-                showError(fieldName + " nu poate fi negativ!");
+                showError(fieldName + " cannot be negative!");
                 return -1;
             }
             return result;
         } catch (NumberFormatException e) {
-            showError("Introduceți un " + fieldName.toLowerCase() + " valid!");
+            showError("Introduce a valid  " + fieldName.toLowerCase());
             return -1;
         }
     }
@@ -496,14 +496,14 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         try {
             return Integer.parseInt(value.trim());
         } catch (NumberFormatException e) {
-            showError("Introduceți un " + fieldName.toLowerCase() + " valid!");
+            showError("Introduce a valid  " + fieldName.toLowerCase());
             return -1;
         }
     }
 
     private boolean confirmAction(String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, message, ButtonType.YES, ButtonType.NO);
-        alert.setTitle("Confirmare");
+        alert.setTitle("Confirmation");
         alert.setHeaderText(null);
         Optional<ButtonType> result = alert.showAndWait();
         return result.isPresent() && result.get() == ButtonType.YES;
@@ -527,7 +527,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @Override
     public void displaySuccess(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
-        alert.setTitle("Succes");
+        alert.setTitle("Success");
         alert.setHeaderText(null);
         alert.showAndWait();
     }
@@ -552,7 +552,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
 
     @Override
     public void confirmExportSuccess(String filePath) {
-        displaySuccess("Exportul a fost realizat cu succes în: " + filePath);
+        displaySuccess("Export was successful in the path: " + filePath);
     }
 
     @Override
@@ -563,7 +563,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @Override
     public void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
-        alert.setTitle("Eroare");
+        alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.showAndWait();
     }

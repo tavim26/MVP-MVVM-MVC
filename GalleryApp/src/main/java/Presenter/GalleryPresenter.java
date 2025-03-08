@@ -24,7 +24,7 @@ public class GalleryPresenter {
 
     public GalleryPresenter(IGalleryGUI gui) {
         if (gui == null) {
-            throw new IllegalArgumentException("Interfața GUI nu poate fi null!");
+            throw new IllegalArgumentException("Not Null GUI!");
         }
         this.gui = gui;
         this.artistRepo = new ArtistRepo();
@@ -45,9 +45,9 @@ public class GalleryPresenter {
             Artist artist = new Artist(name, birthDate, birthPlace, nationality, photo);
             artistRepo.addArtist(artist);
             refreshArtists();
-            gui.displaySuccess(buildSuccessMessage("Artistul", name, "adăugat"));
+            gui.displaySuccess(buildSuccessMessage("Artist", name, "added"));
         } catch (SQLException e) {
-            gui.showError("Eroare la adăugarea artistului: " + e.getMessage());
+            gui.showError("Artist Add Error: " + e.getMessage());
         }
     }
 
@@ -57,9 +57,9 @@ public class GalleryPresenter {
             Artist updatedArtist = new Artist(newName, birthDate, birthPlace, nationality, photo);
             artistRepo.updateArtist(oldName, updatedArtist);
             refreshArtists();
-            gui.displaySuccess(buildSuccessMessage("Artistul", oldName, "actualizat"));
+            gui.displaySuccess(buildSuccessMessage("Artist", oldName, "updated"));
         } catch (SQLException e) {
-            gui.showError("Eroare la actualizarea artistului: " + e.getMessage());
+            gui.showError("Artist Update Error " + e.getMessage());
         }
     }
 
@@ -68,9 +68,9 @@ public class GalleryPresenter {
             validateNotEmpty(name, "Numele artistului");
             artistRepo.deleteArtist(name);
             refreshArtists();
-            gui.displaySuccess(buildSuccessMessage("Artistul", name, "șters"));
+            gui.displaySuccess(buildSuccessMessage("Artist", name, "deleted"));
         } catch (SQLException e) {
-            gui.showError("Eroare la ștergerea artistului: " + e.getMessage());
+            gui.showError("Artist Delete Error " + e.getMessage());
         }
     }
 
@@ -91,17 +91,17 @@ public class GalleryPresenter {
             validateNonNegative(price, "Prețul");
             Artist artist = artistRepo.findArtistByName(artistName);
             if (artist == null) {
-                gui.showError("Artistul " + artistName + " nu există!");
+                gui.showError("Artist " + artistName + " does not exist");
                 return;
             }
             Artwork artwork = new Artwork(title, artist, type, price, creationYear);
             artworkRepo.addArtwork(artwork, artistName);
-            artist.addArtwork(artwork); // Folosim metoda din Model
+            artist.addArtwork(artwork);
             refreshArtworks();
             refreshArtists();
-            gui.confirmSuccess(buildSuccessMessage("Opera", title, "adăugată"));
+            gui.confirmSuccess(buildSuccessMessage("Artwork", title, "added"));
         } catch (SQLException e) {
-            gui.showError("Eroare la adăugarea operei: " + e.getMessage());
+            gui.showError("Artwork Add Error " + e.getMessage());
         }
     }
 
@@ -112,12 +112,12 @@ public class GalleryPresenter {
             validateNonNegative(price, "Prețul");
             Artwork existingArtwork = artworkRepo.findArtworkByTitle(oldTitle);
             if (existingArtwork == null) {
-                gui.showError("Opera " + oldTitle + " nu există!");
+                gui.showError("Artwork " + oldTitle + " does not exist");
                 return;
             }
             Artist newArtist = artistRepo.findArtistByName(artistName);
             if (newArtist == null) {
-                gui.showError("Artistul " + artistName + " nu există!");
+                gui.showError("Artist  " + artistName + " does not exist");
                 return;
             }
             Artwork updatedArtwork = new Artwork(newTitle, newArtist, type, price, creationYear);
@@ -132,9 +132,9 @@ public class GalleryPresenter {
             artistRepo.updateArtist(newArtist.getName(), newArtist);
             refreshArtworks();
             refreshArtists();
-            gui.confirmSuccess(buildSuccessMessage("Opera", oldTitle, "actualizată"));
+            gui.confirmSuccess(buildSuccessMessage("Artwork", oldTitle, "updated"));
         } catch (SQLException e) {
-            gui.showError("Eroare la actualizarea operei: " + e.getMessage());
+            gui.showError("Artwork Update Error " + e.getMessage());
         }
     }
 
@@ -143,7 +143,7 @@ public class GalleryPresenter {
             validateNotEmpty(title, "Titlul operei");
             Artwork artwork = artworkRepo.findArtworkByTitle(title);
             if (artwork == null) {
-                gui.showError("Opera " + title + " nu există!");
+                gui.showError("Artwork " + title + " does not exist");
                 return;
             }
             Artist artist = artwork.getArtist();
@@ -154,9 +154,9 @@ public class GalleryPresenter {
             artworkRepo.deleteArtwork(title);
             refreshArtworks();
             refreshArtists();
-            gui.confirmSuccess(buildSuccessMessage("Opera", title, "ștearsă"));
+            gui.confirmSuccess(buildSuccessMessage("Artwork", title, "deleted"));
         } catch (SQLException e) {
-            gui.showError("Eroare la ștergerea operei: " + e.getMessage());
+            gui.showError("Artwork Delete Error " + e.getMessage());
         }
     }
 
@@ -171,9 +171,9 @@ public class GalleryPresenter {
             validateNotEmpty(imagePath, "Calea către imagine");
             ArtworkImage image = new ArtworkImage(imagePath, null);
             artworkImageRepo.addImage(artworkTitle, image);
-            gui.confirmSuccess("Imaginea a fost adăugată pentru opera " + artworkTitle + "!");
+            gui.confirmSuccess("Image added for artwork " + artworkTitle + "!");
         } catch (SQLException e) {
-            gui.showError("Eroare la adăugarea imaginii: " + e.getMessage());
+            gui.showError("Image add error " + e.getMessage());
         }
     }
 
@@ -189,7 +189,7 @@ public class GalleryPresenter {
         try {
             validateNotEmpty(filePath, "Calea către fișier");
             try (FileWriter writer = new FileWriter(filePath)) {
-                writer.write("Titlu,Artist,Tip,Pret,An\n");
+                writer.write("Title,Artist,Type,Price,Year\n");
                 for (Artwork artwork : artworksTable) {
                     writer.write(String.format("%s,%s,%s,%.2f,%d\n",
                             escapeCSV(artwork.getTitle()), escapeCSV(artwork.getArtist().getName()),
@@ -198,26 +198,26 @@ public class GalleryPresenter {
             }
             gui.confirmExportSuccess(filePath);
         } catch (IOException e) {
-            gui.showError("Eroare la exportul în CSV: " + e.getMessage());
+            gui.showError("CSV export error: " + e.getMessage());
         }
     }
 
 
 
-    public void exportArtworksToText(String filePath) { // Redenumit pentru claritate
+    public void exportArtworksToText(String filePath) {
         try {
             validateNotEmpty(filePath, "Calea către fișier");
             try (FileWriter writer = new FileWriter(filePath)) {
-                writer.write("Lista operelor de artă\n\n");
+                writer.write("Artwork List\n\n");
                 for (Artwork artwork : artworksTable) {
-                    writer.write(String.format("Titlu: %s\nArtist: %s\nTip: %s\nPreț: %.2f\nAn: %d\n\n",
+                    writer.write(String.format("Title: %s\nArtist: %s\nType: %s\nPrice: %.2f\nYear: %d\n\n",
                             artwork.getTitle(), artwork.getArtist().getName(),
                             artwork.getType(), artwork.getPrice(), artwork.getCreationYear()));
                 }
             }
             gui.confirmExportSuccess(filePath);
         } catch (IOException e) {
-            gui.showError("Eroare la exportul în text: " + e.getMessage());
+            gui.showError("DOC export error: " + e.getMessage());
         }
     }
 
@@ -230,7 +230,7 @@ public class GalleryPresenter {
             List<Artist> filteredArtists = artistRepo.searchByName(name);
             gui.displayArtists(filteredArtists);
         } catch (SQLException e) {
-            gui.showError("Eroare la căutarea artiștilor: " + e.getMessage());
+            gui.showError("Artist search error: " + e.getMessage());
         }
     }
 
@@ -239,7 +239,7 @@ public class GalleryPresenter {
             List<Artwork> filteredArtworks = artworkRepo.searchByTitle(title);
             gui.displayArtworks(filteredArtworks);
         } catch (SQLException e) {
-            gui.showError("Eroare la căutarea operelor: " + e.getMessage());
+            gui.showError("Artwork search error: " + e.getMessage());
         }
     }
 
