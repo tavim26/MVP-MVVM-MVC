@@ -28,7 +28,13 @@ public class Artwork {
     public void setTitle(String title) { this.title = title; }
 
     public Artist getArtist() { return artist; }
-    public void setArtist(Artist artist) { this.artist = artist; }
+
+    public void setArtist(Artist artist) {
+        this.artist = artist;
+        if (!artist.getArtworks().contains(this)) {
+            artist.addArtwork(this);
+        }
+    }
 
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }

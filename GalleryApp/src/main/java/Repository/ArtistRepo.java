@@ -17,7 +17,7 @@ public class ArtistRepo {
             stmt.setString(2, artist.getBirthDate());
             stmt.setString(3, artist.getBirthPlace());
             stmt.setString(4, artist.getNationality());
-            stmt.setString(5, artist.getPhoto()); // Adăugat photo
+            stmt.setString(5, artist.getPhoto());
             stmt.executeUpdate();
         }
     }
@@ -35,7 +35,7 @@ public class ArtistRepo {
                         rs.getString("birth_date"),
                         rs.getString("birth_place"),
                         rs.getString("nationality"),
-                        rs.getString("photo") // Adăugat photo
+                        rs.getString("photo")
                 ));
             }
         }
@@ -61,7 +61,7 @@ public class ArtistRepo {
             stmt.setString(2, updatedArtist.getBirthDate());
             stmt.setString(3, updatedArtist.getBirthPlace());
             stmt.setString(4, updatedArtist.getNationality());
-            stmt.setString(5, updatedArtist.getPhoto()); // Adăugat photo
+            stmt.setString(5, updatedArtist.getPhoto());
             stmt.setString(6, oldName);
             stmt.executeUpdate();
         }
@@ -80,7 +80,7 @@ public class ArtistRepo {
                         rs.getString("birth_date"),
                         rs.getString("birth_place"),
                         rs.getString("nationality"),
-                        rs.getString("photo") // Adăugat photo
+                        rs.getString("photo")
                 );
             }
             return null;

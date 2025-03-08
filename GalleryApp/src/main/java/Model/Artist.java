@@ -9,7 +9,7 @@ public class Artist {
     private String birthDate;
     private String birthPlace;
     private String nationality;
-    private String photo; // Atributul nou pentru poza artistului
+    private String photo;
     private List<Artwork> artworks;
 
     public Artist(String name, String birthDate, String birthPlace, String nationality, String photo) {
@@ -21,7 +21,7 @@ public class Artist {
         this.artworks = new ArrayList<>();
     }
 
-    // Getteri și Setteri
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -35,8 +35,15 @@ public class Artist {
     public void setNationality(String nationality) { this.nationality = nationality; }
 
     public String getPhoto() { return photo; } // Getter nou
-    public void setPhoto(String photo) { this.photo = photo; } // Setter nou
+    public void setPhoto(String photo) { this.photo = photo; }
 
     public List<Artwork> getArtworks() { return artworks; }
     public void setArtworks(List<Artwork> artworks) { this.artworks = artworks; }
+
+    public void addArtwork(Artwork artwork) {
+        artworks.add(artwork);
+        if (artwork.getArtist() != this) {
+            artwork.setArtist(this);
+        }
+    }
 }
