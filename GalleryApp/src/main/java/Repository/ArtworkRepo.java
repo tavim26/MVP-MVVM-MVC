@@ -125,10 +125,10 @@ public class ArtworkRepo {
             stmt.setString(1, "%" + title + "%");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Artist artist = artistRepo.findArtistByName(rs.getString("artist_name")); // Corectat la artist_name
+                Artist artist = artistRepo.findArtistByName(rs.getString("artist_name"));
                 artworks.add(new Artwork(
                         rs.getString("title"),
-                        artist, // Folosim artistul complet din baza de date
+                        artist,
                         rs.getString("artwork_type"),
                         rs.getDouble("price"),
                         rs.getInt("creation_year")

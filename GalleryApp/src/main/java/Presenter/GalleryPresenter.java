@@ -17,7 +17,9 @@ public class GalleryPresenter {
     private final ArtistRepo artistRepo;
     private final ArtworkRepo artworkRepo;
     private final ArtworkImageRepo artworkImageRepo;
+
     private final IGalleryGUI gui;
+
     private final ObservableList<Artist> artistsTable;
     private final ObservableList<Artwork> artworksTable;
 
@@ -261,7 +263,7 @@ public class GalleryPresenter {
             artistsTable.setAll(artistRepo.getAllArtists());
             gui.displayArtists(artistsTable);
         } catch (SQLException e) {
-            gui.showError("Eroare la actualizarea listei artiștilor: " + e.getMessage());
+            gui.showError("Eror " + e.getMessage());
         }
     }
 
@@ -270,21 +272,21 @@ public class GalleryPresenter {
             artworksTable.setAll(artworkRepo.getAllArtworks());
             gui.displayArtworks(artworksTable);
         } catch (SQLException e) {
-            gui.showError("Eroare la actualizarea listei operelor: " + e.getMessage());
+            gui.showError("Error " + e.getMessage());
         }
     }
 
     private void validateNotEmpty(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
-            gui.showError(fieldName + " este obligatoriu!");
-            throw new IllegalArgumentException(fieldName + " nu poate fi null sau gol!");
+            gui.showError(fieldName + " is mandatory!");
+            throw new IllegalArgumentException(fieldName + " cannot be null or empty!");
         }
     }
 
     private void validateNonNegative(double value, String fieldName) {
         if (value < 0) {
-            gui.showError(fieldName + " nu poate fi negativ!");
-            throw new IllegalArgumentException(fieldName + " trebuie să fie >= 0!");
+            gui.showError(fieldName + " cannot be negative!");
+            throw new IllegalArgumentException(fieldName + " must be non-negative!");
         }
     }
 

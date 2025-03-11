@@ -180,7 +180,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
                 List<String> titles = presenter.getArtworksByArtist(cellData.getValue().getName());
                 return new SimpleStringProperty(String.join(", ", titles));
             } catch (Exception e) {
-                return new SimpleStringProperty("Eroare la incarcare");
+                return new SimpleStringProperty("Loading error");
             }
         });
     }
@@ -271,7 +271,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         if (confirmAction("Are you sure you want to add artist?")) {
             presenter.addArtist(name, birthDate, birthPlace, nationality, photoPath);
             clearArtistFields();
-            addArtistBox.setSelected(false); // Dezactivează după adăugare
+            addArtistBox.setSelected(false);
         }
     }
 
