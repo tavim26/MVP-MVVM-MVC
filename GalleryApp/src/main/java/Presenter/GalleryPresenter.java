@@ -357,13 +357,9 @@ public class GalleryPresenter {
         return value;
     }
 
-    public ObservableList<Artist> getArtistsTable() {
-        return artistsTable;
-    }
 
-    public ObservableList<Artwork> getArtworksTable() {
-        return artworksTable;
-    }
+
+
 
     public void handleAddArtistBox(boolean isSelected) {
         if (isSelected) {
