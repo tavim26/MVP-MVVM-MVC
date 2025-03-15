@@ -360,26 +360,31 @@ public class GalleryPresenter {
 
 
 
-
-    public void handleAddArtistBox(boolean isSelected) {
-        if (isSelected) {
-            clearArtistFields();
+    public void toggleArtistCheckboxes(boolean isAddChecked) {
+        if (isAddChecked) {
+            gui.clearArtistFields();
+            gui.setArtistFieldsEditable(true);
+        } else {
             gui.setArtistFieldsEditable(true);
         }
     }
 
-    public void handleEditArtistBox(boolean isSelected) {
-        gui.setArtistFieldsEditable(isSelected);
-    }
-
-    public void handleAddArtworkBox(boolean isSelected) {
-        if (isSelected) {
-            clearArtworkFields();
+    public void toggleArtworkCheckboxes(boolean isAddChecked) {
+        if (isAddChecked) {
+            gui.clearArtworkFields();
+            gui.setArtworkFieldsEditable(true);
+        } else {
             gui.setArtworkFieldsEditable(true);
         }
     }
 
-    public void handleEditArtworkBox(boolean isSelected) {
-        gui.setArtworkFieldsEditable(isSelected);
+    public void disableArtistFields() {
+        gui.setArtistFieldsEditable(false);
     }
+
+    public void disableArtworkFields() {
+        gui.setArtworkFieldsEditable(false);
+    }
+
+
 }

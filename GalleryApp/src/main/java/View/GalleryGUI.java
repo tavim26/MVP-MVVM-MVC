@@ -113,10 +113,6 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         filterByPriceField.textProperty().addListener((obs, oldValue, newValue) ->
                 presenter.applyFilters(filterByArtistBox.getValue(), filterByTypeBox.getValue(), filterByPriceField.getText()));
 
-        addArtistBox.setOnAction(event -> presenter.handleAddArtistBox(addArtistBox.isSelected()));
-        editArtistBox.setOnAction(event -> presenter.handleEditArtistBox(editArtistBox.isSelected()));
-        addArtworkBox.setOnAction(event -> presenter.handleAddArtworkBox(addArtworkBox.isSelected()));
-        editArtworkBox.setOnAction(event -> presenter.handleEditArtworkBox(editArtworkBox.isSelected()));
 
         presenter.initializeComboBoxItems();
 
@@ -130,6 +126,49 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+
+
+
+        setArtistFieldsEditable(false);
+        setArtworkFieldsEditable(false);
+
+        // Checkbox mutual exclusivity and behavior
+        addArtistBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                editArtistBox.setSelected(false);
+                presenter.toggleArtistCheckboxes(true);
+            } else if (!editArtistBox.isSelected()) {
+                presenter.disableArtistFields();
+            }
+        });
+
+        editArtistBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                addArtistBox.setSelected(false);
+                presenter.toggleArtistCheckboxes(false);
+            } else if (!addArtistBox.isSelected()) {
+                presenter.disableArtistFields();
+            }
+        });
+
+        addArtworkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                editArtworkBox.setSelected(false);
+                presenter.toggleArtworkCheckboxes(true);
+            } else if (!editArtworkBox.isSelected()) {
+                presenter.disableArtworkFields();
+            }
+        });
+
+        editArtworkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                addArtworkBox.setSelected(false);
+                presenter.toggleArtworkCheckboxes(false);
+            } else if (!addArtworkBox.isSelected()) {
+                presenter.disableArtworkFields();
+            }
+        });
     }
 
     public void configureArtistTable() {
@@ -373,11 +412,12 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         return alert.showAndWait().filter(ButtonType.YES::equals).isPresent();
     }
 
+
     @Override
     public void setArtistFieldsEditable(boolean editable) {
         nameTextField.setEditable(editable);
         birthplaceTextField.setEditable(editable);
-        birthdayDatePicker.setEditable(editable);
+        birthdayDatePicker.setDisable(!editable);
         nationalityTextField.setEditable(editable);
     }
 
@@ -389,6 +429,8 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         priceTextField.setEditable(editable);
         yearTextField.setEditable(editable);
     }
+
+
 
     @Override
     public void setArtistComboBoxItems(List<String> artistNames) {
@@ -410,15 +452,23 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         typeComboBox.setItems(FXCollections.observableArrayList(types));
     }
 
-    public void checkAddArtwork(ActionEvent actionEvent) {
-    }
-
-    public void checkEditArtwork(ActionEvent actionEvent) {
-    }
-
+    @FXML
     public void checkAddArtist(ActionEvent actionEvent) {
+        addArtistBox.setSelected(true);
     }
 
+    @FXML
     public void checkEditArtist(ActionEvent actionEvent) {
+        editArtistBox.setSelected(true);
+    }
+
+    @FXML
+    public void checkAddArtwork(ActionEvent actionEvent) {
+        addArtworkBox.setSelected(true);
+    }
+
+    @FXML
+    public void checkEditArtwork(ActionEvent actionEvent) {
+        editArtworkBox.setSelected(true);
     }
 }

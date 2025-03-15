@@ -36,10 +36,6 @@ public interface IGalleryGUI {
 
     boolean confirmAction(String message);
 
-    void setArtistFieldsEditable(boolean editable);
-
-    void setArtworkFieldsEditable(boolean editable);
-
     void setArtistComboBoxItems(List<String> artistNames);
 
     void setFilterByArtistBoxItems(List<String> artistNames);
@@ -51,5 +47,9 @@ public interface IGalleryGUI {
     void configureArtistTable();
 
     void configureArtworkTable();
+
+    void setArtistFieldsEditable(boolean editable);
+
+    void setArtworkFieldsEditable(boolean editable);
 
 }
