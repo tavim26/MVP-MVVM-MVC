@@ -6,8 +6,7 @@ import Model.ArtworkImage;
 import Repository.ArtistRepo;
 import Repository.ArtworkRepo;
 import Repository.ArtworkImageRepo;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,15 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GalleryPresenter {
+public class GalleryPresenter
+{
     private final ArtistRepo artistRepo;
     private final ArtworkRepo artworkRepo;
     private final ArtworkImageRepo artworkImageRepo;
     private final IGalleryGUI gui;
-    private final ObservableList<Artist> artistsTable;
-    private final ObservableList<Artwork> artworksTable;
+    private final List<Artist> artistsTable;
+    private final List<Artwork> artworksTable;
 
-    public GalleryPresenter(IGalleryGUI gui) {
+    public GalleryPresenter(IGalleryGUI gui)
+    {
         if (gui == null) {
             throw new IllegalArgumentException("Not Null GUI!");
         }
@@ -31,14 +32,17 @@ public class GalleryPresenter {
         this.artistRepo = new ArtistRepo();
         this.artworkRepo = new ArtworkRepo();
         this.artworkImageRepo = new ArtworkImageRepo();
-        this.artistsTable = FXCollections.observableArrayList();
-        this.artworksTable = FXCollections.observableArrayList();
+        this.artistsTable = new ArrayList<>();
+        this.artworksTable = new ArrayList<>();
     }
 
     public void initializeComboBoxItems() {
         gui.setTypeComboBoxItems(List.of("Painting", "Sculpture", "Photography"));
         gui.setFilterByTypeBoxItems(List.of("All", "Painting", "Sculpture", "Photography"));
     }
+
+
+
 
     // CRUD Artists
     public void addArtist(String name, String birthDate, String birthPlace, String nationality, String photo) {
@@ -53,13 +57,15 @@ public class GalleryPresenter {
         }
     }
 
+
+
+
     public void updateArtist(String oldName, String newName, String birthDate, String birthPlace, String nationality, String photo) {
         try {
             validateNotEmpty(newName, "Numele artistului");
             Artist updatedArtist = new Artist(newName, birthDate, birthPlace, nationality, photo);
             artistRepo.updateArtist(oldName, updatedArtist);
 
-            // Actualizăm numele artistului în toate operele asociate
             List<Artwork> artworks = artworkRepo.getAllArtworks();
             for (Artwork artwork : artworks) {
                 if (artwork.getArtist().getName().equals(oldName)) {
@@ -76,6 +82,9 @@ public class GalleryPresenter {
         }
     }
 
+
+
+
     public void deleteArtist(String name) {
         try {
             validateNotEmpty(name, "Numele artistului");
@@ -86,6 +95,8 @@ public class GalleryPresenter {
             gui.showError("Artist Delete Error " + e.getMessage());
         }
     }
+
+
 
     // CRUD Artworks
     public void addArtwork(String title, String artistName, String type, double price, int creationYear) {
@@ -163,6 +174,8 @@ public class GalleryPresenter {
         }
     }
 
+
+
     // Images
     public void addArtworkImage(String artworkTitle, String imagePath) {
         try {
@@ -182,6 +195,8 @@ public class GalleryPresenter {
         List<String> imagePaths = images.stream().map(ArtworkImage::getImagePath).collect(Collectors.toList());
         gui.displayArtworkImages(imagePaths);
     }
+
+
 
     // Export
     public void exportArtworksToCSV(String filePath) {
@@ -218,6 +233,9 @@ public class GalleryPresenter {
         }
     }
 
+
+
+
     // Search
     public void searchArtistsByName(String name) {
         try {
@@ -225,7 +243,11 @@ public class GalleryPresenter {
                 refreshArtists();
             } else {
                 List<Artist> filteredArtists = artistRepo.searchByName(name);
-                gui.displayArtists(filteredArtists);
+                List<String> artistData = filteredArtists.stream()
+                        .map(a -> String.format("%s,%s,%s,%s,%s",
+                                a.getName(), a.getBirthDate(), a.getBirthPlace(), a.getNationality(), a.getPhoto()))
+                        .collect(Collectors.toList());
+                gui.displayArtists(artistData);
             }
         } catch (SQLException e) {
             gui.showError("Artist search error: " + e.getMessage());
@@ -238,7 +260,11 @@ public class GalleryPresenter {
                 refreshArtworks();
             } else {
                 List<Artwork> filteredArtworks = artworkRepo.searchByTitle(title);
-                gui.displayArtworks(filteredArtworks);
+                List<String> artworkData = filteredArtworks.stream()
+                        .map(a -> String.format("%s,%s,%s,%.2f,%d",
+                                a.getTitle(), a.getArtist().getName(), a.getType(), a.getPrice(), a.getCreationYear()))
+                        .collect(Collectors.toList());
+                gui.displayArtworks(artworkData);
             }
         } catch (SQLException e) {
             gui.showError("Artwork search error: " + e.getMessage());
@@ -266,13 +292,22 @@ public class GalleryPresenter {
                         .collect(Collectors.toList());
             }
         }
-        gui.displayFilteredArtworks(filteredArtworks);
+        List<String> artworkData = filteredArtworks.stream()
+                .map(a -> String.format("%s,%s,%s,%.2f,%d",
+                        a.getTitle(), a.getArtist().getName(), a.getType(), a.getPrice(), a.getCreationYear()))
+                .collect(Collectors.toList());
+        gui.displayFilteredArtworks(artworkData);
     }
 
     // Refresh
     public void refreshArtists() throws SQLException {
-        artistsTable.setAll(artistRepo.getAllArtists());
-        gui.displayArtists(artistsTable);
+        artistsTable.clear();
+        artistsTable.addAll(artistRepo.getAllArtists());
+        List<String> artistData = artistsTable.stream()
+                .map(a -> String.format("%s,%s,%s,%s,%s",
+                        a.getName(), a.getBirthDate(), a.getBirthPlace(), a.getNationality(), a.getPhoto()))
+                .collect(Collectors.toList());
+        gui.displayArtists(artistData);
         List<String> artistNames = artistsTable.stream().map(Artist::getName).collect(Collectors.toList());
         artistNames.add(0, "All");
         gui.setArtistComboBoxItems(artistNames);
@@ -280,8 +315,13 @@ public class GalleryPresenter {
     }
 
     public void refreshArtworks() throws SQLException {
-        artworksTable.setAll(artworkRepo.getAllArtworks());
-        gui.displayArtworks(artworksTable);
+        artworksTable.clear();
+        artworksTable.addAll(artworkRepo.getAllArtworks());
+        List<String> artworkData = artworksTable.stream()
+                .map(a -> String.format("%s,%s,%s,%.2f,%d",
+                        a.getTitle(), a.getArtist().getName(), a.getType(), a.getPrice(), a.getCreationYear()))
+                .collect(Collectors.toList());
+        gui.displayArtworks(artworkData);
     }
 
     // Helper methods
@@ -289,25 +329,31 @@ public class GalleryPresenter {
         return artworkRepo.getArtworksByArtist(artistName);
     }
 
-    public void populateArtistFields(Artist artist) {
-        gui.populateArtistFields(artist);
+    public void populateArtistFields(String name) throws SQLException {
+        Artist artist = artistRepo.findArtistByName(name);
+        if (artist != null) {
+            gui.populateArtistFields(artist.getName(), artist.getBirthDate(), artist.getBirthPlace(),
+                    artist.getNationality(), artist.getPhoto());
+        }
+    }
+
+    public void populateArtworkFields(String title) throws SQLException {
+        Artwork artwork = artworkRepo.findArtworkByTitle(title);
+        if (artwork != null) {
+            gui.populateArtworkFields(artwork.getTitle(), artwork.getArtist().getName(), artwork.getType(),
+                    String.valueOf(artwork.getPrice()), String.valueOf(artwork.getCreationYear()));
+        }
     }
 
     public void clearArtistFields() {
         gui.clearArtistFields();
     }
 
-    public void populateArtworkFields(Artwork artwork) {
-        gui.populateArtworkFields(artwork);
-    }
-
     public void clearArtworkFields() {
         gui.clearArtworkFields();
     }
 
-    public boolean confirmAction(String message) {
-        return gui.confirmAction(message);
-    }
+
 
     private double parseDouble(String value, String fieldName) {
         try {
@@ -317,15 +363,6 @@ public class GalleryPresenter {
                 return -1;
             }
             return result;
-        } catch (NumberFormatException e) {
-            gui.showError("Introduce a valid " + fieldName.toLowerCase());
-            return -1;
-        }
-    }
-
-    private int parseInt(String value, String fieldName) {
-        try {
-            return Integer.parseInt(value.trim());
         } catch (NumberFormatException e) {
             gui.showError("Introduce a valid " + fieldName.toLowerCase());
             return -1;
@@ -357,9 +394,6 @@ public class GalleryPresenter {
         return value;
     }
 
-
-
-
     public void toggleArtistCheckboxes(boolean isAddChecked) {
         if (isAddChecked) {
             gui.clearArtistFields();
@@ -385,6 +419,4 @@ public class GalleryPresenter {
     public void disableArtworkFields() {
         gui.setArtworkFieldsEditable(false);
     }
-
-
 }
