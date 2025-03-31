@@ -10,9 +10,12 @@ module org.example.galleryapp {
     opens org.example.galleryapp to javafx.fxml;
     exports org.example.galleryapp;
 
+    exports View to javafx.graphics, javafx.fxml;
+
     opens Model to javafx.base;
 
-    exports View to javafx.graphics;
-
     opens View to javafx.fxml;
+
+    opens ViewModel to javafx.fxml;
+
 }
