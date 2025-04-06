@@ -1,5 +1,6 @@
-package ViewModel.Command;
+package ViewModel.Commands;
 
-public interface ICommands {
-    void execute();
+public interface ICommands
+{
+    
 }

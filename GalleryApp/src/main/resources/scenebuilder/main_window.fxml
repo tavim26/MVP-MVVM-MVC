@@ -5,7 +5,6 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -191,7 +190,7 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Spinner fx:id="priceSpinner" />
+                        <TextField fx:id="priceTextField" prefHeight="26.0" prefWidth="151.0" promptText="Price" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="179.0" prefHeight="38.0" prefWidth="202.0" spacing="18.0">

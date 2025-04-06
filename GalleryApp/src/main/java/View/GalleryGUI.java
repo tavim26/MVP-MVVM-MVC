@@ -1,14 +1,13 @@
 package View;
 
 import ViewModel.GalleryViewModel;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,7 +16,6 @@ public class GalleryGUI
 {
     @FXML private AnchorPane artistPane;
     @FXML private AnchorPane artworkPane;
-
     @FXML private Button artistButton;
     @FXML private Button artworkButton;
 
@@ -31,19 +29,19 @@ public class GalleryGUI
     @FXML private Button editArtistButton;
     @FXML private Button deleteArtistButton;
     @FXML private Button clearArtistButton;
-    @FXML private TableView<List<String>> artistTable;
-    @FXML private TableColumn<List<String>, String> nameColumn;
-    @FXML private TableColumn<List<String>, String> birthdayColumn;
-    @FXML private TableColumn<List<String>, String> birthplaceColumn;
-    @FXML private TableColumn<List<String>, String> nationalityColumn;
-    @FXML private TableColumn<List<String>, String> artworkListColumn;
+    @FXML private TableView<Object> artistTable;
+    @FXML private TableColumn<Object, String> nameColumn;
+    @FXML private TableColumn<Object, String> birthdayColumn;
+    @FXML private TableColumn<Object, String> birthplaceColumn;
+    @FXML private TableColumn<Object, String> nationalityColumn;
+    @FXML private TableColumn<Object, String> artworkListColumn;
     @FXML private ImageView artistPhoto;
 
     // Artwork Pane
     @FXML private TextField titleTextField;
     @FXML private ComboBox<String> artistComboBox;
     @FXML private ComboBox<String> typeComboBox;
-    @FXML private Spinner<Double> priceSpinner;
+    @FXML private TextField priceTextField;
     @FXML private TextField yearTextField;
     @FXML private TextField searchArtworkTextField;
     @FXML private ComboBox<String> filterByArtistBox;
@@ -56,274 +54,159 @@ public class GalleryGUI
     @FXML private Button clearArtworkButton;
     @FXML private Button saveToCsvButton;
     @FXML private Button saveToDocButton;
-    @FXML private TableView<List<String>> artworkTable;
-    @FXML private TableColumn<List<String>, String> titleColumn;
-    @FXML private TableColumn<List<String>, String> artistNameColumn;
-    @FXML private TableColumn<List<String>, String> typeColumn;
-    @FXML private TableColumn<List<String>, String> priceColumn;
-    @FXML private TableColumn<List<String>, String> creationYearColumn;
+    @FXML private TableView<Object> artworkTable;
+    @FXML private TableColumn<Object, String> titleColumn;
+    @FXML private TableColumn<Object, String> artistNameColumn;
+    @FXML private TableColumn<Object, String> typeColumn;
+    @FXML private TableColumn<Object, Double> priceColumn;
+    @FXML private TableColumn<Object, Integer> creationYearColumn;
     @FXML private ImageView artworkImage1;
     @FXML private ImageView artworkImage2;
 
-    // ViewModel
-    private GalleryViewModel viewModel;
+    private final GalleryViewModel viewModel;
 
-    private ObservableList<List<String>> artistObservableList;
-    private ObservableList<List<String>> artworkObservableList;
-    private ObservableList<String> artistNamesObservable;
-    private ObservableList<String> artworkTypesObservable;
+    // Proprietăți pentru Artist
+    private final StringProperty artistName = new SimpleStringProperty("");
+    private final StringProperty artistBirthplace = new SimpleStringProperty("");
+    private final ObjectProperty<LocalDate> artistBirthday = new SimpleObjectProperty<>();
+    private final StringProperty artistNationality = new SimpleStringProperty("");
+    private final StringProperty searchArtist = new SimpleStringProperty("");
+    private final ObservableList<Object> artists = FXCollections.observableArrayList();
+
+    // Proprietăți pentru Artwork
+    private final StringProperty artworkTitle = new SimpleStringProperty("");
+    private final StringProperty artworkArtist = new SimpleStringProperty("");
+    private final StringProperty artworkType = new SimpleStringProperty("");
+    private final StringProperty artworkPrice = new SimpleStringProperty("0.0");
+    private final StringProperty artworkYear = new SimpleStringProperty("0");
+    private final StringProperty searchArtwork = new SimpleStringProperty("");
+    private final StringProperty filterArtist = new SimpleStringProperty("");
+    private final StringProperty filterType = new SimpleStringProperty("");
+    private final DoubleProperty filterPrice = new SimpleDoubleProperty(1000.0);
+    private final ObservableList<Object> artworks = FXCollections.observableArrayList();
+    private final ObservableList<String> artistNames = FXCollections.observableArrayList();
+    private final ObservableList<String> artworkTypes = FXCollections.observableArrayList("Painting", "Sculpture");
+
+    public GalleryGUI()
+    {
+        this.viewModel = new GalleryViewModel();
+    }
 
     @FXML
     public void initialize()
     {
-        viewModel = new GalleryViewModel();
+        // Binding bidirecțional UI -> Proprietăți
+        nameTextField.textProperty().bindBidirectional(artistName);
+        birthplaceTextField.textProperty().bindBidirectional(artistBirthplace);
+        birthdayDatePicker.valueProperty().bindBidirectional(artistBirthday);
+        nationalityTextField.textProperty().bindBidirectional(artistNationality);
+        searchArtistTextField.textProperty().bindBidirectional(searchArtist);
 
-        artistObservableList = FXCollections.observableArrayList();
-        artworkObservableList = FXCollections.observableArrayList();
-        artistNamesObservable = FXCollections.observableArrayList();
-        artworkTypesObservable = FXCollections.observableArrayList();
+        titleTextField.textProperty().bindBidirectional(artworkTitle);
+        artistComboBox.valueProperty().bindBidirectional(artworkArtist);
+        typeComboBox.valueProperty().bindBidirectional(artworkType);
+        priceTextField.textProperty().bindBidirectional(artworkPrice);
+        yearTextField.textProperty().bindBidirectional(artworkYear);
+        searchArtworkTextField.textProperty().bindBidirectional(searchArtwork);
+        filterByArtistBox.valueProperty().bindBidirectional(filterArtist);
+        filterByTypeBox.valueProperty().bindBidirectional(filterType);
+        priceSlider.valueProperty().bindBidirectional(filterPrice);
 
-        setupArtistTable();
-        setupArtworkTable();
+        // Binding unidirecțional pentru liste
+        artistTable.itemsProperty().bind(new SimpleObjectProperty<>(artists));
+        artworkTable.itemsProperty().bind(new SimpleObjectProperty<>(artworks));
+        artistComboBox.itemsProperty().bind(new SimpleObjectProperty<>(artistNames));
+        typeComboBox.itemsProperty().bind(new SimpleObjectProperty<>(artworkTypes));
+        filterByArtistBox.itemsProperty().bind(new SimpleObjectProperty<>(artistNames));
+        filterByTypeBox.itemsProperty().bind(new SimpleObjectProperty<>(artworkTypes));
 
-        setupComboBoxes();
 
-        priceSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 100000, 0, 100));
 
-        bindProperties();
-        bindCommands();
 
-        viewModel.addPropertyChangedListener(this::handlePropertyChanged);
 
-        artistPane.setVisible(true);
-        artworkPane.setVisible(false);
-    }
+        // Configurare tabele
+        nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty((String) ((List<?>) cellData.getValue()).get(0)));
+        birthdayColumn.setCellValueFactory(cellData -> new SimpleStringProperty((String) ((List<?>) cellData.getValue()).get(1)));
+        birthplaceColumn.setCellValueFactory(cellData -> new SimpleStringProperty((String) ((List<?>) cellData.getValue()).get(2)));
+        nationalityColumn.setCellValueFactory(cellData -> new SimpleStringProperty((String) ((List<?>) cellData.getValue()).get(3)));
+        artworkListColumn.setCellValueFactory(cellData -> new SimpleStringProperty((String) ((List<?>) cellData.getValue()).get(4)));
 
-    private void setupArtistTable()
-    {
-        nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(0)));
-        birthdayColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(1)));
-        birthplaceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(2)));
-        nationalityColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(3)));
-        artworkListColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(4)));
+        titleColumn.setCellValueFactory(cellData -> new SimpleStringProperty((String) ((List<?>) cellData.getValue()).get(0)));
+        artistNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty((String) ((List<?>) cellData.getValue()).get(1)));
+        typeColumn.setCellValueFactory(cellData -> new SimpleStringProperty((String) ((List<?>) cellData.getValue()).get(2)));
+        priceColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty((Double) ((List<?>) cellData.getValue()).get(3)).asObject());
+        creationYearColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty((Integer) ((List<?>) cellData.getValue()).get(4)).asObject());
 
-        artistObservableList.setAll(viewModel.getArtistData());
-        artistTable.setItems(artistObservableList);
+        // Sincronizare cu ViewModel
+        viewModel.setOnDataChanged(() -> {
 
-        artistTable.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldSelection, newSelection) ->
-                        viewModel.setSelectedArtistName(newSelection != null ? newSelection.get(0) : "")
-        );
-    }
+            artists.setAll(viewModel.getArtists().stream()
+                    .map(a -> List.of(a.getName(), a.getBirthDate(), a.getBirthPlace(), a.getNationality(),
+                            a.getArtworks().stream().map(Artwork::getTitle).collect(Collectors.joining(", "))))
+                    .toList());
+            artworks.setAll(viewModel.getArtworks().stream()
+                    .map(a -> List.of(a.getTitle(), a.getArtist().getName(), a.getType(), a.getPrice(), a.getCreationYear()))
+                    .toList());
+            artistNames.setAll(viewModel.getArtists().stream().map(Artist::getName).toList());
+            if (viewModel.getMessage() != null) {
+                new Alert(Alert.AlertType.INFORMATION, viewModel.getMessage()).showAndTell();
+            }
 
-    private void setupArtworkTable()
-    {
-        titleColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(0)));
-        artistNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(1)));
-        typeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(2)));
-        priceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(3)));
-        creationYearColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(4)));
-
-        artworkObservableList.setAll(viewModel.getArtworkData());
-        artworkTable.setItems(artworkObservableList);
-
-        artworkTable.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldSelection, newSelection) ->
-                        viewModel.setSelectedArtworkTitle(newSelection != null ? newSelection.get(0) : "")
-        );
-    }
-
-    private void setupComboBoxes()
-    {
-        artistNamesObservable.setAll(viewModel.getArtistNames());
-        artworkTypesObservable.setAll(viewModel.getArtworkTypes());
-
-        artistComboBox.setItems(artistNamesObservable);
-        typeComboBox.setItems(artworkTypesObservable);
-        filterByArtistBox.setItems(artistNamesObservable);
-        filterByTypeBox.setItems(artworkTypesObservable);
-
-        // Binding bidirecțional pentru artistComboBox
-        artistComboBox.setValue(viewModel.getArtistComboBoxValue());
-        artistComboBox.valueProperty().addListener((obs, oldValue, newValue) ->
-                viewModel.setArtistComboBoxValue(newValue));
-
-        // Binding bidirecțional pentru typeComboBox
-        typeComboBox.setValue(viewModel.getTypeComboBoxValue());
-        typeComboBox.valueProperty().addListener((obs, oldValue, newValue) ->
-                viewModel.setTypeComboBoxValue(newValue));
-
-        // Binding pentru filtre
-        filterByArtistBox.setValue(viewModel.getFilterArtist());
-        filterByArtistBox.valueProperty().addListener((obs, oldValue, newValue) -> {
-            viewModel.setFilterArtist(newValue);
-            viewModel.getFilterByArtistCommand().execute();
         });
 
-        filterByTypeBox.setValue(viewModel.getFilterType());
-        filterByTypeBox.valueProperty().addListener((obs, oldValue, newValue) -> {
-            viewModel.setFilterType(newValue);
-            viewModel.getFilterByTypeCommand().execute();
-        });
-    }
+        // Binding bidirecțional Proprietăți -> ViewModel
+        artistName.addListener((obs, old, newVal) -> viewModel.getCrtArtist().setName(newVal));
+        artistBirthplace.addListener((obs, old, newVal) -> viewModel.getCrtArtist().setBirthPlace(newVal));
+        artistBirthday.addListener((obs, old, newVal) -> viewModel.getCrtArtist().setBirthDate(newVal != null ? newVal.toString() : ""));
+        artistNationality.addListener((obs, old, newVal) -> viewModel.getCrtArtist().setNationality(newVal));
+        searchArtist.addListener((obs, old, newVal) -> viewModel.getCrtArtist().setName(newVal));
 
-    private void bindProperties()
-    {
-        // nameTextField
-        nameTextField.setText(viewModel.getNameTextFieldValue());
-        nameTextField.textProperty().addListener((obs, oldValue, newValue) ->
-                viewModel.setNameTextFieldValue(newValue));
-
-        // birthplaceTextField
-        birthplaceTextField.setText(viewModel.getBirthplaceTextFieldValue());
-        birthplaceTextField.textProperty().addListener((obs, oldValue, newValue) ->
-                viewModel.setBirthplaceTextFieldValue(newValue));
-
-        // birthdayDatePicker
-        String dateValue = viewModel.getBirthdayDatePickerValue();
-        birthdayDatePicker.setValue(dateValue.isEmpty() ? null : LocalDate.parse(dateValue));
-        birthdayDatePicker.valueProperty().addListener((obs, oldValue, newValue) ->
-                viewModel.setBirthdayDatePickerValue(newValue != null ? newValue.toString() : ""));
-
-        // nationalityTextField
-        nationalityTextField.setText(viewModel.getNationalityTextFieldValue());
-        nationalityTextField.textProperty().addListener((obs, oldValue, newValue) ->
-                viewModel.setNationalityTextFieldValue(newValue));
-
-        // searchArtistTextField
-        searchArtistTextField.setText(viewModel.getArtistSearchQuery());
-        searchArtistTextField.textProperty().addListener((obs, oldValue, newValue) -> {
-            viewModel.setArtistSearchQuery(newValue);
-            viewModel.getSearchArtistCommand().execute();
-        });
-
-
-
-
-
-        // titleTextField
-        titleTextField.setText(viewModel.getTitleTextFieldValue());
-        titleTextField.textProperty().addListener((obs, oldValue, newValue) ->
-                viewModel.setTitleTextFieldValue(newValue));
-
-        // yearTextField
-        yearTextField.setText(String.valueOf(viewModel.getYearTextFieldValue()));
-        yearTextField.textProperty().addListener((obs, oldValue, newValue) -> {
+        artworkTitle.addListener((obs, old, newVal) -> viewModel.getCrtArtwork().setTitle(newVal));
+        artworkArtist.addListener((obs, old, newVal) -> viewModel.getCrtArtwork().setArtist(
+                viewModel.getArtists().stream().filter(a -> a.getName().equals(newVal)).findFirst().orElse(null)));
+        artworkType.addListener((obs, old, newVal) -> viewModel.getCrtArtwork().setType(newVal));
+        artworkPrice.addListener((obs, old, newVal) -> {
             try {
-                viewModel.setYearTextFieldValue(newValue.isEmpty() ? 0 : Integer.parseInt(newValue));
+                viewModel.getCrtArtwork().setPrice(newVal.isEmpty() ? 0.0 : Double.parseDouble(newVal));
             } catch (NumberFormatException e) {
-                viewModel.setYearTextFieldValue(0);
+                viewModel.getCrtArtwork().setPrice(0.0);
             }
         });
-
-        // priceSpinner
-        priceSpinner.getValueFactory().setValue(viewModel.getPriceSpinnerValue());
-        priceSpinner.valueProperty().addListener((obs, oldValue, newValue) ->
-                viewModel.setPriceSpinnerValue(newValue));
-
-        // searchArtworkTextField
-        searchArtworkTextField.setText(viewModel.getArtworkSearchQuery());
-        searchArtworkTextField.textProperty().addListener((obs, oldValue, newValue) -> {
-            viewModel.setArtworkSearchQuery(newValue);
-            viewModel.getSearchArtworkCommand().execute();
+        artworkYear.addListener((obs, old, newVal) -> {
+            try {
+                viewModel.getCrtArtwork().setCreationYear(newVal.isEmpty() ? 0 : Integer.parseInt(newVal));
+            } catch (NumberFormatException e) {
+                viewModel.getCrtArtwork().setCreationYear(0);
+            }
         });
+        searchArtwork.addListener((obs, old, newVal) -> viewModel.getCrtArtwork().setTitle(newVal));
+        filterArtist.addListener((obs, old, newVal) -> viewModel.getCrtArtwork().setArtist(
+                viewModel.getArtists().stream().filter(a -> a.getName().equals(newVal)).findFirst().orElse(null)));
+        filterType.addListener((obs, old, newVal) -> viewModel.getCrtArtwork().setType(newVal));
+        filterPrice.addListener((obs, old, newVal) -> viewModel.getCrtArtwork().setPrice(newVal.doubleValue()));
 
-        // priceSlider
-        priceSlider.setValue(viewModel.getFilterPrice());
-        priceSlider.valueProperty().addListener((obs, oldValue, newValue) -> {
-            viewModel.setFilterPrice(newValue.doubleValue());
-            viewModel.getFilterByPriceCommand().execute();
-        });
-    }
+        // Comenzi
+        addArtistButton.setOnAction(e -> viewModel.getAddArtistCommand().execute());
+        editArtistButton.setOnAction(e -> viewModel.getUpdateArtistCommand().execute());
+        deleteArtistButton.setOnAction(e -> viewModel.getDeleteArtistCommand().execute());
+        searchArtistTextField.setOnAction(e -> viewModel.getSearchArtistsCommand().execute());
 
-    private void bindCommands()
-    {
-        // Butoane meniu
-        artistButton.setOnAction(event -> {
-            artistPane.setVisible(true);
-            artworkPane.setVisible(false);
-        });
-        artworkButton.setOnAction(event -> {
-            artistPane.setVisible(false);
-            artworkPane.setVisible(true);
-        });
+        addArtworkButton.setOnAction(e -> viewModel.getAddArtworkCommand().execute());
+        editArtworkButton.setOnAction(e -> viewModel.getUpdateArtworkCommand().execute());
+        deleteArtworkButton.setOnAction(e -> viewModel.getDeleteArtworkCommand().execute());
+        searchArtworkTextField.setOnAction(e -> viewModel.getSearchArtworkCommand().execute());
+        filterByArtistBox.setOnAction(e -> viewModel.getFilterArtworkByArtistCommand().execute());
+        filterByTypeBox.setOnAction(e -> viewModel.getFilterArtworkByTypeCommand().execute());
+        priceSlider.setOnMouseReleased(e -> viewModel.getFilterArtworkByPriceCommand().execute());
 
-        // Artist Pane
-        addArtistButton.setOnAction(event -> viewModel.getAddArtistCommand().execute());
-        editArtistButton.setOnAction(event -> viewModel.getUpdateArtistCommand().execute());
-        deleteArtistButton.setOnAction(event -> viewModel.getDeleteArtistCommand().execute());
-        clearArtistButton.setOnAction(event -> viewModel.getClearArtistCommand().execute());
+        saveToCsvButton.setOnAction(e -> viewModel.getSaveToCsvCommand().execute());
+        saveToDocButton.setOnAction(e -> viewModel.getSaveToDocCommand().execute());
 
-        // Artwork Pane
-        addArtworkButton.setOnAction(event -> viewModel.getAddArtworkCommand().execute());
-        editArtworkButton.setOnAction(event -> viewModel.getUpdateArtworkCommand().execute());
-        deleteArtworkButton.setOnAction(event -> viewModel.getDeleteArtworkCommand().execute());
-        addImageButton.setOnAction(event -> viewModel.getAddImageCommand().execute());
-        clearArtworkButton.setOnAction(event -> viewModel.getClearArtworkCommand().execute());
-        saveToCsvButton.setOnAction(event -> viewModel.getExportToCsvCommand().execute());
-        saveToDocButton.setOnAction(event -> viewModel.getExportToDocCommand().execute());
-    }
+        // Navigare pane-uri
+        artistButton.setOnAction(e -> { artistPane.setVisible(true); artworkPane.setVisible(false); });
+        artworkButton.setOnAction(e -> { artistPane.setVisible(false); artworkPane.setVisible(true); });
 
-    private void handlePropertyChanged(String propertyName)
-    {
-        switch (propertyName) {
-            case "artistData":
-                artistObservableList.setAll(viewModel.getArtistData());
-                break;
-            case "artworkData":
-                artworkObservableList.setAll(viewModel.getArtworkData());
-                break;
-            case "artistNames":
-                artistNamesObservable.setAll(viewModel.getArtistNames());
-                break;
-            case "artworkTypes":
-                artworkTypesObservable.setAll(viewModel.getArtworkTypes());
-                break;
-            case "selectedArtistPhotoPath":
-                String photoPath = viewModel.getSelectedArtistPhotoPath();
-                artistPhoto.setImage(photoPath != null && !photoPath.isEmpty() ? new Image(photoPath) : null);
-                break;
-            case "artworkImagePaths":
-                updateArtworkImages();
-                break;
-            case "nameTextFieldValue":
-                nameTextField.setText(viewModel.getNameTextFieldValue());
-                break;
-            case "birthplaceTextFieldValue":
-                birthplaceTextField.setText(viewModel.getBirthplaceTextFieldValue());
-                break;
-            case "birthdayDatePickerValue":
-                String dateValue = viewModel.getBirthdayDatePickerValue();
-                birthdayDatePicker.setValue(dateValue.isEmpty() ? null : LocalDate.parse(dateValue));
-                break;
-            case "nationalityTextFieldValue":
-                nationalityTextField.setText(viewModel.getNationalityTextFieldValue());
-                break;
-            case "titleTextFieldValue":
-                titleTextField.setText(viewModel.getTitleTextFieldValue());
-                break;
-            case "artistComboBoxValue":
-                artistComboBox.setValue(viewModel.getArtistComboBoxValue());
-                break;
-            case "typeComboBoxValue":
-                typeComboBox.setValue(viewModel.getTypeComboBoxValue());
-                break;
-            case "priceSpinnerValue":
-                priceSpinner.getValueFactory().setValue(viewModel.getPriceSpinnerValue());
-                break;
-            case "yearTextFieldValue":
-                yearTextField.setText(String.valueOf(viewModel.getYearTextFieldValue()));
-                break;
-            case "message":
-                System.out.println(viewModel.getMessage());
-                break;
-        }
-    }
-
-    private void updateArtworkImages()
-    {
-        List<String> imagePaths = viewModel.getArtworkImagePaths();
-        artworkImage1.setImage(imagePaths.size() > 0 ? new Image(imagePaths.get(0)) : null);
-        artworkImage2.setImage(imagePaths.size() > 1 ? new Image(imagePaths.get(1)) : null);
+        // Inițializare
+        viewModel.setOnDataChanged(viewModel.getOnDataChanged()); // Trigger inițial
     }
 }

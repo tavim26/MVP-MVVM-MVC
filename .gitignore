@@ -1,0 +1,49 @@
+# --- Visual Studio ---
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# --- Build ---
+bin/
+obj/
+
+# --- Nu include fișierele SQLite dacă nu sunt esențiale ---
+*.sqlite
+*.db
+
+# --- Java / JavaFX ---
+*.class
+*.jar
+*.war
+*.log
+*.iml
+target/
+out/
+
+# --- Eclipse / IntelliJ / NetBeans ---
+.idea/
+.project
+.classpath
+.settings/
+.nb-gradle/
+
+# --- Sisteme ---
+Thumbs.db
+ehthumbs.db
+.DS_Store
+*.swp
+
+# --- Node/React (dacă ai ceva extra) ---
+node_modules/
+dist/
+
+# --- CSV și fișiere temporare ---
+*.csv
+*.tmp
+*.bak
+
+# --- Exclude orice folder specific IDE care nu contează pentru GitHub ---
+*.vscode/
+*.ncb

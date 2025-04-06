@@ -5,12 +5,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArtistRepo {
+public class ArtistRepo
+{
     private static final String DB_URL = "jdbc:sqlite:database.sqlite";
 
     public void addArtist(Artist artist) throws SQLException {
         String sql = "INSERT INTO Artist (name, birth_date, birth_place, nationality, photo) VALUES (?, ?, ?, ?, ?)";
-
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, artist.getName());
@@ -22,10 +22,11 @@ public class ArtistRepo {
         }
     }
 
-    public List<Artist> getAllArtists() throws SQLException {
+    public List<Artist> getAllArtists() throws SQLException
+    {
         List<Artist> artists = new ArrayList<>();
-        String sql = "SELECT name, birth_date, birth_place, nationality, photo FROM Artist";
 
+        String sql = "SELECT name, birth_date, birth_place, nationality, photo FROM Artist";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -42,9 +43,9 @@ public class ArtistRepo {
         return artists;
     }
 
-    public void deleteArtist(String name) throws SQLException {
+    public void deleteArtist(String name) throws SQLException
+    {
         String sql = "DELETE FROM Artist WHERE name = ?";
-
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, name);
@@ -52,7 +53,8 @@ public class ArtistRepo {
         }
     }
 
-    public void updateArtist(String oldName, Artist updatedArtist) throws SQLException {
+    public void updateArtist(String oldName, Artist updatedArtist) throws SQLException
+    {
         String sql = "UPDATE Artist SET name = ?, birth_date = ?, birth_place = ?, nationality = ?, photo = ? WHERE name = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -88,7 +90,8 @@ public class ArtistRepo {
     }
 
 
-    public List<Artist> searchByName(String name) throws SQLException {
+    public List<Artist> searchByName(String name) throws SQLException
+    {
         String sql = "SELECT * FROM Artist WHERE name LIKE ?";
         List<Artist> artists = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL);

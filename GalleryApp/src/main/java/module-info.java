@@ -5,6 +5,7 @@ module org.example.galleryapp {
 
     requires org.controlsfx.controls;
     requires java.sql;
+    requires java.desktop;
 
 
     opens org.example.galleryapp to javafx.fxml;
