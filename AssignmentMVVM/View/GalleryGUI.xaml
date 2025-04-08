@@ -15,7 +15,7 @@
                Margin="310,47,0,0" 
                VerticalAlignment="Top" 
                Width="166"
-               Source="{Binding ArtistImageSource}"/>
+               Source="{Binding ArtistImageSource}" Stretch="UniformToFill"/>
 
         <!-- Butoane pentru gestionarea artistului -->
         <Button x:Name="AddArtistButton" 
@@ -64,7 +64,7 @@
                  Background="#FFEAEAEA" 
                  Height="25" 
                  Text="{Binding Path =CrtArtist.Name, Mode = TwoWay}"
-                 FontSize="18"/>
+                 FontSize="16"/>
 
 
         <TextBox x:Name="BirthplaceField" 
@@ -76,7 +76,7 @@
                  Background="#FFEAEAEA" 
                  Height="25" 
                  Text="{Binding Path=CrtArtist.BirthPlace, Mode = TwoWay}"
-                 FontSize="18"/>
+                 FontSize="16"/>
 
 
         <TextBox x:Name="NationalityField" 
@@ -88,7 +88,7 @@
                  Background="#FFEAEAEA" 
                  Height="25" 
                  Text="{Binding Path= CrtArtist.Nationality, Mode = TwoWay}"
-                 FontSize="18"/>
+                 FontSize="16"/>
 
 
         <DatePicker x:Name="BirthdayField" 
@@ -97,7 +97,7 @@
                     VerticalAlignment="Top" 
                     Width="160" 
                     SelectedDate="{Binding Path= CrtArtist.BirthDate, Mode =TwoWay}"
-                    Height="30"/>
+                    Height="33" FontSize="16"/>
 
         <!-- Etichete pentru câmpurile artistului -->
         <Label Content="Name" 
@@ -149,7 +149,7 @@
                  Background="#FFEAEAEA" 
                  Height="26" 
                  Text="{Binding Path= SearchedArtist, Mode = TwoWay}"
-                 FontSize="18"
+                 FontSize="16"
                  />
 
 
@@ -186,14 +186,14 @@
         </DataGrid>
 
         <!-- Secțiunea Artwork -->
-        <!-- Imagini pentru lucrări -->
+        <!-- Imagini pentru opere -->
         <Image x:Name="FirstImage" 
                HorizontalAlignment="Left" 
                Height="152" 
                Margin="914,44,0,0" 
                VerticalAlignment="Top" 
                Source="{Binding ArtworkImage1}"
-               Width="166"/>
+               Width="166" Stretch="UniformToFill"/>
 
 
         <Image x:Name="SecondImage" 
@@ -202,12 +202,12 @@
                Margin="1122,46,0,0" 
                VerticalAlignment="Top" 
                Source="{Binding ArtworkImage2}"
-               Width="166"/>
+               Width="166" Stretch="UniformToFill"/>
 
-        <!-- Câmpuri de introducere pentru lucrări -->
+        <!-- Câmpuri de introducere pentru opere -->
         <TextBox x:Name="TitleField" 
                  HorizontalAlignment="Left" 
-                 Margin="718,44,0,0" 
+                 Margin="718,49,0,0" 
                  TextWrapping="Wrap" 
                  VerticalAlignment="Top" 
                  Width="152" 
@@ -216,28 +216,28 @@
 
 
                  Text="{Binding Path=CrtArtwork.Title, Mode=TwoWay}"
-                 FontSize="18"/>
+                 FontSize="16"/>
 
 
         <ComboBox x:Name="ArtistComboBox" 
                   HorizontalAlignment="Left" 
-                  Margin="718,84,0,0" 
+                  Margin="718,82,0,0" 
                   VerticalAlignment="Top" 
                   Width="152" 
                   ItemsSource="{Binding Path=ArtistsList}"
                   DisplayMemberPath="Name"
                   SelectedItem="{Binding Path= CrtArtwork.Artist,Mode = TwoWay}"
-                  Height="24"/>
+                  Height="29" FontSize="16"/>
 
 
         <ComboBox x:Name="TypeComboBox" 
                   HorizontalAlignment="Left" 
-                  Margin="718,125,0,0" 
+                  Margin="718,122,0,0" 
                   VerticalAlignment="Top" 
                   Width="152" 
                   ItemsSource="{Binding Path =ArtworkTypes}"
                   SelectedItem="{Binding Path=CrtArtwork.Type, Mode = TwoWay}"
-                  Height="24"/>
+                  Height="32" FontSize="16"/>
 
 
         <TextBox x:Name="PriceField" 
@@ -249,7 +249,7 @@
                  Background="#FFEAEAEA" 
                  Height="25" 
                  Text="{Binding Path=CrtArtwork.Price, Mode = TwoWay}"
-                 FontSize="18"/>
+                 FontSize="16"/>
 
 
         <TextBox x:Name="YearField" 
@@ -261,13 +261,13 @@
                  Background="#FFEAEAEA" 
                  Height="26" 
                  Text="{Binding Path =CrtArtwork.CreationYear, Mode=TwoWay}"
-                 FontSize="18"/>
+                 FontSize="16"/>
 
 
-        <!-- Etichete pentru câmpurile lucrărilor -->
+        <!-- Etichete pentru câmpurile opere -->
         <Label Content="Title" 
                HorizontalAlignment="Left" 
-               Margin="640,36,0,0" 
+               Margin="640,46,0,0" 
                VerticalAlignment="Top" 
                FontSize="18" 
                Width="54" 
@@ -285,11 +285,11 @@
                Foreground="White"/>
         <Label Content="Type" 
                HorizontalAlignment="Left" 
-               Margin="640,115,0,0" 
+               Margin="640,118,0,0" 
                VerticalAlignment="Top" 
                FontSize="18" 
                Width="54" 
-               Height="34" 
+               Height="39" 
                FontWeight="Bold" 
                Foreground="White"/>
         <Label Content="Price" 
@@ -311,7 +311,7 @@
                FontWeight="Bold" 
                Foreground="White"/>
 
-        <!-- Butoane pentru gestionarea lucrărilor -->
+        <!-- Butoane pentru gestionarea opere -->
         <Button x:Name="AddArtworkButton" 
                 Content="Add" 
                 HorizontalAlignment="Left" 
@@ -362,57 +362,58 @@
                 Command="{Binding Path =AddImageCommand}"
                 FontWeight="Bold"/>
 
-        <!-- Câmpuri și filtre pentru căutarea lucrărilor -->
+
+        <!-- Câmpuri și filtre pentru căutarea opere -->
 
 
         <TextBox x:Name="SearchArtworkField" 
                  HorizontalAlignment="Left" 
-                 Margin="635,357,0,0" 
+                 Margin="635,358,0,0" 
                  TextWrapping="Wrap" 
                  VerticalAlignment="Top" 
                  Width="145" 
                  Background="#FFEAEAEA" 
-                 Height="25" 
+                 Height="24" 
                  Text="{Binding Path = SearchedArtwork, Mode =TwoWay}"
-                 FontSize="18"
+                 FontSize="16"
                  />
 
 
         <ComboBox x:Name="FilterByArtistBox" 
                   HorizontalAlignment="Left" 
-                  Margin="929,359,0,0" 
+                  Margin="916,359,0,0" 
                   VerticalAlignment="Top" 
-                  Width="103"
+                  Width="116"
                   ItemsSource="{Binding ArtistNames}"
                   SelectedItem="{Binding SelectedArtistName}"
-                  Height="24" 
+                  Height="29" FontSize="16" 
                   ></ComboBox>
 
 
         <ComboBox x:Name="FilterByTypeBox" 
                   HorizontalAlignment="Left" 
-                  Margin="1047,359,0,0" 
+                  Margin="1037,359,0,0" 
                   VerticalAlignment="Top" 
-                  Width="102" 
+                  Width="112" 
                   ItemsSource="{Binding ArtworkTypes}"
                   SelectedItem="{Binding SelectedArtworkType}"
-                  Height="24" 
+                  Height="29" FontSize="16" 
                   ></ComboBox>
 
 
         <TextBox x:Name="FilterByPriceField" 
                  HorizontalAlignment="Left" 
-                 Margin="1159,358,0,0" 
+                 Margin="1154,358,0,0" 
                  TextWrapping="Wrap" 
                  VerticalAlignment="Top" 
                  Width="105" 
                  Background="#FFEAEAEA" 
-                 Height="26" 
+                 Height="30" 
                  Text="{Binding Path = PriceFilter}"
-                 FontSize="18"
+                 FontSize="16"
                />
 
-        <!-- Tabel pentru lucrări -->
+        <!-- Tabel pentru opere -->
         <DataGrid x:Name="ArtworkDataGrid" 
                   AutoGenerateColumns="False" 
                   Margin="635,398,31,103" 
@@ -426,7 +427,7 @@
                                     Width="*" 
                                     Binding="{Binding Path =Title}" />
 
-                <!-- Coloana pentru Artist (afisează numele artistului) -->
+                <!-- Coloana pentru Artist -->
                 <DataGridTextColumn Header="Artist" 
                                     Width="*" 
                                     Binding="{Binding Path =Artist.Name}" />
@@ -507,27 +508,27 @@
         <Button x:Name="FilterByArtistButton" 
             Content="ByArtist" 
             HorizontalAlignment="Left" 
-            Margin="929,320,0,0" 
+            Margin="916,320,0,0" 
             VerticalAlignment="Top" 
             Height="34" 
-            Width="103" 
+            Width="116" 
             FontSize="18" 
             Command="{Binding FilterByArtistCommand}"
             FontWeight="Bold" />
         <Button x:Name="FilterByTypeButton" 
             Content="ByType" 
             HorizontalAlignment="Left" 
-            Margin="1047,320,0,0" 
+            Margin="1037,320,0,0" 
             VerticalAlignment="Top" 
             Height="34" 
-            Width="102" 
+            Width="112" 
             FontSize="18" 
             Command="{Binding FilterByTypeCommand}"
             FontWeight="Bold" />
         <Button x:Name="FilterByPriceButton" 
             Content="ByPrice" 
             HorizontalAlignment="Left" 
-            Margin="1159,319,0,0" 
+            Margin="1154,319,0,0" 
             VerticalAlignment="Top" 
             Height="34" 
             Width="105" 

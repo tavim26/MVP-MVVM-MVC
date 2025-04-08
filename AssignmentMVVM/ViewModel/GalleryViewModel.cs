@@ -20,6 +20,7 @@ namespace AssignmentMVVM.ViewModel
 
         private Artist crtArtist;
         private Artwork crtArtwork;
+
         private List<Artist> artistsList;
         private List<Artwork> artworksList;
 
@@ -225,15 +226,22 @@ namespace AssignmentMVVM.ViewModel
             {
                 crtArtwork = value;
 
-                if (crtArtwork != null)
+                if (!string.IsNullOrWhiteSpace(crtArtwork?.Title))
                 {
                     crtArtwork.Images = artworkImageRepo.GetImagesByArtwork(crtArtwork.Title);
-                    LoadArtworkImages(); 
+                    LoadArtworkImages();
+                }
+                else
+                {
+                    crtArtwork.Images = new List<ArtworkImage>(); 
+                    ArtworkImage1 = null;
+                    ArtworkImage2 = null;
                 }
 
                 OnPropertyChanged(nameof(CrtArtwork));
             }
         }
+
 
 
 
