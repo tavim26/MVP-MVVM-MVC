@@ -1,4 +1,4 @@
-package Model.Repository;
+package Repository;
 
 import Model.Artwork;
 import Model.Artist;
@@ -6,21 +6,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArtworkRepo
-{
+public class ArtworkRepo {
     private static final String DB_URL = "jdbc:sqlite:database.sqlite";
 
     private ArtistRepo artistRepo;
 
 
-    public ArtworkRepo()
-    {
+    public ArtworkRepo() {
         this.artistRepo = new ArtistRepo();
     }
 
     public void addArtwork(Artwork artwork, String artistName) throws SQLException {
         String sql = "INSERT INTO Artwork (title, id_artist, artwork_type, price, creation_year) " +
                 "VALUES (?, (SELECT id_artist FROM Artist WHERE name = ?), ?, ?, ?)";
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, artwork.getTitle());
@@ -36,6 +35,7 @@ public class ArtworkRepo
         List<Artwork> artworks = new ArrayList<>();
         String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +
                 "FROM Artwork a JOIN Artist ar ON a.id_artist = ar.id_artist";
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -54,6 +54,7 @@ public class ArtworkRepo
 
     public void deleteArtwork(String title) throws SQLException {
         String sql = "DELETE FROM Artwork WHERE title = ?";
+
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, title);
@@ -76,84 +77,44 @@ public class ArtworkRepo
         }
     }
 
-
-
-
-    public List<Artwork> filterArtworkByArtist(String artistName) throws SQLException {
-        List<Artwork> artworks = new ArrayList<>();
+    public Artwork findArtworkByTitle(String title) throws SQLException {
         String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +
-                "FROM Artwork a JOIN Artist ar ON a.id_artist = ar.id_artist WHERE ar.name = ?";
+                "FROM Artwork a JOIN Artist ar ON a.id_artist = ar.id_artist WHERE a.title = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, title);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Artwork(rs.getString("title"),
+                        new Artist(rs.getString("artist_name"), "", "", "", ""),
+                        rs.getString("artwork_type"), rs.getDouble("price"),
+                        rs.getInt("creation_year"));
+            }
+            return null;
+        }
+    }
 
+
+
+
+
+    public List<String> getArtworksByArtist(String artistName) throws SQLException {
+        String sql = "SELECT a.title " +
+                "FROM Artwork a " +
+                "JOIN Artist ar ON a.id_artist = ar.id_artist " +
+                "WHERE ar.name = ?";
+
+        List<String> artworkTitles = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, artistName);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Artist artist = artistRepo.findArtistByName(rs.getString("artist_name"));
-                artworks.add(new Artwork(
-                        rs.getString("title"),
-                        artist,
-                        rs.getString("artwork_type"),
-                        rs.getDouble("price"),
-                        rs.getInt("creation_year")
-                ));
+                artworkTitles.add(rs.getString("title"));
             }
         }
-        return artworks;
+        return artworkTitles;
     }
-
-
-
-    public List<Artwork> filterArtworkByPrice(double maxPrice) throws SQLException {
-        List<Artwork> artworks = new ArrayList<>();
-        String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +
-                "FROM Artwork a JOIN Artist ar ON a.id_artist = ar.id_artist WHERE a.price < ?";
-
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setDouble(1, maxPrice);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Artist artist = artistRepo.findArtistByName(rs.getString("artist_name"));
-                artworks.add(new Artwork(
-                        rs.getString("title"),
-                        artist,
-                        rs.getString("artwork_type"),
-                        rs.getDouble("price"),
-                        rs.getInt("creation_year")
-                ));
-            }
-        }
-        return artworks;
-    }
-
-
-    public List<Artwork> filterArtworkByType(String type) throws SQLException
-    {
-        List<Artwork> artworks = new ArrayList<>();
-        String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +
-                "FROM Artwork a JOIN Artist ar ON a.id_artist = ar.id_artist WHERE a.artwork_type = ?";
-
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, type);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                Artist artist = artistRepo.findArtistByName(rs.getString("artist_name"));
-                artworks.add(new Artwork(
-                        rs.getString("title"),
-                        artist,
-                        rs.getString("artwork_type"),
-                        rs.getDouble("price"),
-                        rs.getInt("creation_year")
-                ));
-            }
-        }
-        return artworks;
-    }
-
-
-
 
     public List<Artwork> searchByTitle(String title) throws SQLException {
         String sql = "SELECT a.title, a.artwork_type, a.price, a.creation_year, ar.name AS artist_name " +

@@ -17,6 +17,6 @@ module org.example.galleryapp {
 
     opens View to javafx.fxml;
 
-    opens ViewModel to javafx.fxml;
+    opens Presenter to javafx.fxml;
 
 }

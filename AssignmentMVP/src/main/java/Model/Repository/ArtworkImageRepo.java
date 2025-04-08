@@ -1,4 +1,4 @@
-package Model.Repository;
+package Repository;
 
 
 import Model.ArtworkImage;
