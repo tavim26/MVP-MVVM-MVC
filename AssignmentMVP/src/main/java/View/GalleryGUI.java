@@ -67,6 +67,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         artistButton.setOnAction(event -> clickArtistButton());
         artworkButton.setOnAction(event -> clickArtworkButton());
         artistPane.setVisible(true);
@@ -127,13 +128,11 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             throw new RuntimeException(e);
         }
 
-        setArtistFieldsEditable(false);
-        setArtworkFieldsEditable(false);
-
       
     }
 
-    public void configureArtistTable() {
+    public void configureArtistTable()
+    {
         TableColumn<String, String> nameColumn = (TableColumn<String, String>) artistTable.getColumns().get(0);
         TableColumn<String, String> birthdateColumn = (TableColumn<String, String>) artistTable.getColumns().get(1);
         TableColumn<String, String> birthplaceColumn = (TableColumn<String, String>) artistTable.getColumns().get(2);
@@ -343,13 +342,6 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         artworkImage2.setImage(imagePaths.size() > 1 ? new Image(imagePaths.get(1)) : null);
     }
 
-    @Override
-    public boolean confirmAction(String message) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, message, ButtonType.YES, ButtonType.NO);
-        alert.setTitle("Confirmation");
-        alert.setHeaderText(null);
-        return alert.showAndWait().filter(ButtonType.YES::equals).isPresent();
-    }
 
     @Override
     public void confirmExportSuccess(String filePath) {

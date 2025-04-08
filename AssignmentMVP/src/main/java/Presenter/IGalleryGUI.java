@@ -17,7 +17,6 @@ public interface IGalleryGUI {
     void clearArtistFields();
     void clearArtworkFields();
     void displayArtworkImages(List<String> imagePaths);
-    boolean confirmAction(String message);
     void setArtistComboBoxItems(List<String> artistNames);
     void setFilterByArtistBoxItems(List<String> artistNames);
     void setFilterByTypeBoxItems(List<String> types);
