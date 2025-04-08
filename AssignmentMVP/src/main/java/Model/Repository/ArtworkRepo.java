@@ -1,4 +1,4 @@
-package Repository;
+package Model.Repository;
 
 import Model.Artwork;
 import Model.Artist;

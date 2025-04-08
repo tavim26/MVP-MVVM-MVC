@@ -1,9 +1,25 @@
 package Presenter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IGalleryGUI {
 
+    // Artist input
+    String getArtistName();
+    String getArtistBirthplace();
+    String getArtistNationality();
+    LocalDate getArtistBirthday();
+    String getArtistPhoto();
+
+    // Artwork input
+    String getArtworkTitle();
+    String getArtworkArtist();
+    String getArtworkType();
+    String getArtworkPrice();
+    String getArtworkYear();
+
+    // Display/update methods
     void displayArtists(List<String> artistData);
     void displaySuccess(String message);
     void displayArtworks(List<String> artworkData);
@@ -17,12 +33,9 @@ public interface IGalleryGUI {
     void clearArtistFields();
     void clearArtworkFields();
     void displayArtworkImages(List<String> imagePaths);
+
     void setArtistComboBoxItems(List<String> artistNames);
     void setFilterByArtistBoxItems(List<String> artistNames);
     void setFilterByTypeBoxItems(List<String> types);
     void setTypeComboBoxItems(List<String> types);
-    void configureArtistTable();
-    void configureArtworkTable();
-    void setArtistFieldsEditable(boolean editable);
-    void setArtworkFieldsEditable(boolean editable);
 }

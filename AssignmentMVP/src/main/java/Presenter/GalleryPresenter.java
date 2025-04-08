@@ -3,13 +3,14 @@ package Presenter;
 import Model.Artist;
 import Model.Artwork;
 import Model.ArtworkImage;
-import Repository.ArtistRepo;
-import Repository.ArtworkRepo;
-import Repository.ArtworkImageRepo;
+import Model.Repository.ArtistRepo;
+import Model.Repository.ArtworkRepo;
+import Model.Repository.ArtworkImageRepo;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -355,7 +356,8 @@ public class GalleryPresenter
 
 
 
-    private double parseDouble(String value, String fieldName) {
+    private double parseDouble(String value, String fieldName)
+    {
         try {
             double result = Double.parseDouble(value.trim());
             if (result < 0) {
@@ -369,14 +371,16 @@ public class GalleryPresenter
         }
     }
 
-    private void validateNotEmpty(String value, String fieldName) {
+    private void validateNotEmpty(String value, String fieldName)
+    {
         if (value == null || value.trim().isEmpty()) {
             gui.showError(fieldName + " is mandatory!");
             throw new IllegalArgumentException(fieldName + " cannot be null or empty!");
         }
     }
 
-    private void validateNonNegative(double value, String fieldName) {
+    private void validateNonNegative(double value, String fieldName)
+    {
         if (value < 0) {
             gui.showError(fieldName + " cannot be negative!");
             throw new IllegalArgumentException(fieldName + " must be non-negative!");
@@ -387,36 +391,129 @@ public class GalleryPresenter
         return String.format("%s %s a fost %s cu succes!", entity, name, action);
     }
 
-    private String escapeCSV(String value) {
+    private String escapeCSV(String value)
+    {
         if (value.contains(",")) {
             return "\"" + value + "\"";
         }
         return value;
     }
+    public void onAddArtistClicked(String photoPath) {
+        try {
+            String name = gui.getArtistName();
+            String birthPlace = gui.getArtistBirthplace();
+            String nationality = gui.getArtistNationality();
+            LocalDate birthDate = gui.getArtistBirthday();
 
-    public void toggleArtistCheckboxes(boolean isAddChecked) {
-        if (isAddChecked) {
-            gui.clearArtistFields();
-            gui.setArtistFieldsEditable(true);
-        } else {
-            gui.setArtistFieldsEditable(true);
+            validateNotEmpty(name, "Numele artistului");
+            Artist artist = new Artist(name, birthDate != null ? birthDate.toString() : "", birthPlace, nationality, photoPath);
+            artistRepo.addArtist(artist);
+            refreshArtists();
+            gui.displaySuccess(buildSuccessMessage("Artist", name, "added"));
+        } catch (SQLException e) {
+            gui.showError("Artist Add Error: " + e.getMessage());
         }
     }
 
-    public void toggleArtworkCheckboxes(boolean isAddChecked) {
-        if (isAddChecked) {
-            gui.clearArtworkFields();
-            gui.setArtworkFieldsEditable(true);
-        } else {
-            gui.setArtworkFieldsEditable(true);
+    public void onAddArtworkClicked() {
+        try {
+            String title = gui.getArtworkTitle();
+            String artistName = gui.getArtworkArtist();
+            String type = gui.getArtworkType();
+            double price = parseDouble(gui.getArtworkPrice(), "Prețul");
+            int year = Integer.parseInt(gui.getArtworkYear());
+
+            validateNotEmpty(title, "Titlul operei");
+            validateNotEmpty(artistName, "Artistul");
+            validateNonNegative(price, "Prețul");
+
+            Artist artist = artistRepo.findArtistByName(artistName);
+            if (artist == null) {
+                gui.showError("Artistul nu există!");
+                return;
+            }
+
+            Artwork artwork = new Artwork(title, artist, type, price, year);
+            artworkRepo.addArtwork(artwork, artistName);
+            refreshArtworks();
+            gui.displaySuccess(buildSuccessMessage("Artwork", title, "added"));
+        } catch (SQLException e) {
+            gui.showError("Artwork Add Error: " + e.getMessage());
         }
     }
 
-    public void disableArtistFields() {
-        gui.setArtistFieldsEditable(false);
+
+    public void onEditArtistClicked(String oldName) {
+        try {
+            String name = gui.getArtistName();
+            String birthPlace = gui.getArtistBirthplace();
+            String nationality = gui.getArtistNationality();
+            LocalDate birthDate = gui.getArtistBirthday();
+            String photoPath = gui.getArtistPhoto();
+
+            validateNotEmpty(name, "Numele artistului");
+            Artist updated = new Artist(name, birthDate != null ? birthDate.toString() : "", birthPlace, nationality, photoPath);
+
+            artistRepo.updateArtist(oldName, updated);
+
+            List<Artwork> artworks = artworkRepo.getAllArtworks();
+            for (Artwork a : artworks) {
+                if (a.getArtist().getName().equals(oldName)) {
+                    a.setArtist(updated);
+                    artworkRepo.updateArtwork(a.getTitle(), a, name);
+                }
+            }
+
+            refreshArtists();
+            refreshArtworks();
+            gui.displaySuccess(buildSuccessMessage("Artist", oldName, "updated"));
+        } catch (SQLException e) {
+            gui.showError("Artist update error: " + e.getMessage());
+        }
     }
 
-    public void disableArtworkFields() {
-        gui.setArtworkFieldsEditable(false);
+    public void onEditArtworkClicked(String oldTitle) {
+        try {
+            String title = gui.getArtworkTitle();
+            String artistName = gui.getArtworkArtist();
+            String type = gui.getArtworkType();
+            double price = parseDouble(gui.getArtworkPrice(), "Prețul");
+            int year = Integer.parseInt(gui.getArtworkYear());
+
+            validateNotEmpty(title, "Titlul operei");
+            validateNotEmpty(artistName, "Artistul");
+            validateNonNegative(price, "Prețul");
+
+            Artwork existing = artworkRepo.findArtworkByTitle(oldTitle);
+            if (existing == null) {
+                gui.showError("Opera nu există!");
+                return;
+            }
+
+            Artist newArtist = artistRepo.findArtistByName(artistName);
+            if (newArtist == null) {
+                gui.showError("Artistul nu există!");
+                return;
+            }
+
+            Artwork updated = new Artwork(title, newArtist, type, price, year);
+            artworkRepo.updateArtwork(oldTitle, updated, artistName);
+
+            Artist oldArtist = existing.getArtist();
+            if (!oldArtist.getName().equals(artistName)) {
+                oldArtist.getArtworks().remove(existing);
+                artistRepo.updateArtist(oldArtist.getName(), oldArtist);
+                newArtist.addArtwork(updated);
+                artistRepo.updateArtist(newArtist.getName(), newArtist);
+            }
+
+            refreshArtworks();
+            refreshArtists();
+            gui.confirmSuccess(buildSuccessMessage("Artwork", oldTitle, "updated"));
+        } catch (SQLException e) {
+            gui.showError("Eroare la actualizarea operei: " + e.getMessage());
+        }
     }
+
+
 }

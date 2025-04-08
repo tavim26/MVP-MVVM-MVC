@@ -5,7 +5,6 @@ import Presenter.IGalleryGUI;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -17,6 +16,7 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -61,12 +61,14 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
     @FXML private Slider priceSlider;
 
 
-    public GalleryGUI() {
+    public GalleryGUI()
+    {
         this.presenter = new GalleryPresenter(this);
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL url, ResourceBundle resourceBundle)
+    {
 
         artistButton.setOnAction(event -> clickArtistButton());
         artworkButton.setOnAction(event -> clickArtworkButton());
@@ -80,7 +82,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             if (newSelection != null) {
                 String[] data = newSelection.split(",");
                 try {
-                    presenter.populateArtistFields(data[0]); // Pass name to fetch full data
+                    presenter.populateArtistFields(data[0]);
                 } catch (SQLException e) {
                     showError("Error loading artist data: " + e.getMessage());
                 }
@@ -92,7 +94,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
             if (newSelection != null) {
                 String[] data = newSelection.split(",");
                 try {
-                    presenter.populateArtworkFields(data[0]); // Pass title to fetch full data
+                    presenter.populateArtworkFields(data[0]);
                     presenter.displayArtworkImages(data[0]);
                 } catch (SQLException e) {
                     showError("Error loading artwork data: " + e.getMessage());
@@ -166,46 +168,61 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         creationYearColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().split(",")[4]));
     }
 
+
     @FXML
-    private void clickArtistButton() {
+    private void clickAddArtist()
+    {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+        File selectedFile = fileChooser.showOpenDialog(addArtistButton.getScene().getWindow());
+        String photoPath = selectedFile != null ? selectedFile.toURI().toString() : "";
+        presenter.onAddArtistClicked(photoPath);
+    }
+
+    @FXML
+    private void clickAddArtwork() {
+        presenter.onAddArtworkClicked();
+    }
+
+
+    @FXML
+    private void clickClearArtist() {
+        presenter.clearArtistFields();
+    }
+
+    @FXML
+    private void clickClearArtwork() {
+        presenter.clearArtworkFields();
+    }
+
+    @FXML
+    private void clickArtistButton()
+    {
         artistPane.setVisible(true);
         artworkPane.setVisible(false);
     }
 
     @FXML
-    private void clickArtworkButton() {
+    private void clickArtworkButton()
+    {
         artistPane.setVisible(false);
         artworkPane.setVisible(true);
     }
 
-    @FXML
-    private void clickAddArtist() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
-        File selectedFile = fileChooser.showOpenDialog(addArtistButton.getScene().getWindow());
-        String photoPath = selectedFile != null ? selectedFile.toURI().toString() : "";
 
-        presenter.addArtist(
-                nameTextField.getText(),
-                birthdayDatePicker.getValue() != null ? birthdayDatePicker.getValue().toString() : "",
-                birthplaceTextField.getText(),
-                nationalityTextField.getText(),
-                photoPath
-        );
-    }
 
     @FXML
     private void clickEditArtist() {
-        String selectedArtist = artistTable.getSelectionModel().getSelectedItem();
-        String oldName = selectedArtist != null ? selectedArtist.split(",")[0] : "";
-        presenter.updateArtist(
-                oldName,
-                nameTextField.getText(),
-                birthdayDatePicker.getValue() != null ? birthdayDatePicker.getValue().toString() : "",
-                birthplaceTextField.getText(),
-                nationalityTextField.getText(),
-                artistPhoto.getImage() != null ? artistPhoto.getImage().getUrl() : ""
-        );
+        String selected = artistTable.getSelectionModel().getSelectedItem();
+        String oldName = selected != null ? selected.split(",")[0] : "";
+        presenter.onEditArtistClicked(oldName);
+    }
+
+    @FXML
+    private void clickEditArtwork() {
+        String selected = artworkTable.getSelectionModel().getSelectedItem();
+        String oldTitle = selected != null ? selected.split(",")[0] : "";
+        presenter.onEditArtworkClicked(oldTitle);
     }
 
     @FXML
@@ -215,30 +232,7 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         presenter.deleteArtist(name);
     }
 
-    @FXML
-    private void clickAddArtwork() {
-        presenter.addArtwork(
-                titleTextField.getText().trim(),
-                artistComboBox.getValue(),
-                typeComboBox.getValue(),
-                Double.parseDouble(priceTextField.getText()),
-                Integer.parseInt(yearTextField.getText())
-        );
-    }
 
-    @FXML
-    private void clickEditArtwork() {
-        String selectedArtwork = artworkTable.getSelectionModel().getSelectedItem();
-        String oldTitle = selectedArtwork != null ? selectedArtwork.split(",")[0] : "";
-        presenter.updateArtwork(
-                oldTitle,
-                titleTextField.getText().trim(),
-                artistComboBox.getValue(),
-                typeComboBox.getValue(),
-                Double.parseDouble(priceTextField.getText()),
-                Integer.parseInt(yearTextField.getText())
-        );
-    }
 
     @FXML
     private void clickDeleteArtwork() {
@@ -273,6 +267,10 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         File file = fileChooser.showSaveDialog(saveToDocButton.getScene().getWindow());
         presenter.exportArtworksToText(file.getAbsolutePath());
     }
+
+
+
+
 
     // IGalleryGUI methods
     @Override
@@ -381,33 +379,50 @@ public class GalleryGUI implements IGalleryGUI, Initializable {
         typeComboBox.setItems(FXCollections.observableArrayList(types));
     }
 
-    @Override
-    public void setArtistFieldsEditable(boolean editable) {
-        nameTextField.setEditable(editable);
-        birthplaceTextField.setEditable(editable);
-        birthdayDatePicker.setDisable(!editable);
-        nationalityTextField.setEditable(editable);
-    }
+
 
     @Override
-    public void setArtworkFieldsEditable(boolean editable) {
-        titleTextField.setEditable(editable);
-        artistComboBox.setDisable(!editable);
-        typeComboBox.setDisable(!editable);
-        priceTextField.setEditable(editable);
-        yearTextField.setEditable(editable);
+    public String getArtistName() {
+        return nameTextField.getText();
+    }
+    @Override
+    public String getArtistBirthplace() {
+        return birthplaceTextField.getText();
+    }
+    @Override
+    public String getArtistNationality() {
+        return nationalityTextField.getText();
+    }
+    @Override
+    public LocalDate getArtistBirthday() {
+        return birthdayDatePicker.getValue();
+    }
+    @Override
+    public String getArtistPhoto() {
+        return artistPhoto.getImage() != null ? artistPhoto.getImage().getUrl() : "";
+    }
+
+    @Override
+    public String getArtworkTitle() {
+        return titleTextField.getText();
+    }
+    @Override
+    public String getArtworkArtist() {
+        return artistComboBox.getValue();
+    }
+    @Override
+    public String getArtworkType() {
+        return typeComboBox.getValue();
+    }
+    @Override
+    public String getArtworkPrice() {
+        return priceTextField.getText();
+    }
+    @Override
+    public String getArtworkYear() {
+        return yearTextField.getText();
     }
 
 
-
-    @FXML
-    private void clickClearArtist() {
-        presenter.clearArtistFields();
-    }
-
-    @FXML
-    private void clickClearArtwork() {
-        presenter.clearArtworkFields();
-    }
 
 }
