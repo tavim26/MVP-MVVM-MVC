@@ -1,35 +1,17 @@
 package View;
 
-import Controller.GalleryController;
-
 import Model.Observer.Observable;
 import Model.Observer.Observer;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
 
-import java.io.File;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 
 public class GalleryView implements Observer
 {
-
-    private GalleryController controller;
-
-    public void setController(GalleryController controller)
-    {
-        this.controller = controller;
-    }
 
     // Left pane buttons
     @FXML private Button artistButton;
@@ -92,385 +74,435 @@ public class GalleryView implements Observer
     @FXML private CategoryAxis artistAxis;
     @FXML private NumberAxis numberOfArtworksAxis;
 
-    @FXML
-    public void initialize()
-    {
-        setupArtistTable();
-        setupArtworkTable();
-        setupSearch();
-        setupFilter();
-        setupComboBoxes();
 
+    // Left pane buttons
+    public Button getArtistButton() {
+        return artistButton;
     }
 
-
-
-    private void setupArtistTable()
-    {
-        nameColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[0]));
-        birthdayColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[1]));
-        birthplaceColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[2]));
-        nationalityColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[3]));
-
-        artistTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-
-            if(newSel != null) {
-                populateArtistFields(newSel);
-            }
-        });
+    public void setArtistButton(Button artistButton) {
+        this.artistButton = artistButton;
     }
 
-    private void setupArtworkTable()
-    {
-        titleColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[0]));
-        artistNameColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[1]));
-        typeColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[2]));
-        priceColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[3]));
-        creationYearColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[4]));
-
-        artworkTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-            if (newSel != null)
-            {
-                populateArtworkFields(newSel);
-            }
-
-
-        });
+    public Button getArtworkButton() {
+        return artworkButton;
     }
 
-
-    private void populateArtistFields(String[] data)
-    {
-        nameTextField.setText(data[0]);
-        birthdayDatePicker.setValue(LocalDate.parse(data[1]));
-        birthplaceTextField.setText(data[2]);
-        nationalityTextField.setText(data[3]);
-        artistPhoto.setImage(data[4] != null && !data[4].isBlank() ? safeLoadImage(data[4]) : null);
+    public void setArtworkButton(Button artworkButton) {
+        this.artworkButton = artworkButton;
     }
 
-    private void populateArtworkFields(String[] data)
-    {
-        titleTextField.setText(data[0]);
-        artistComboBox.setValue(data[1]);
-        typeComboBox.setValue(data[2]);
-        priceTextField.setText(data[3]);
-        yearTextField.setText(data[4]);
-        displayArtworkImages(data[0]);
+    public Button getStatisticsButton() {
+        return statisticsButton;
     }
 
-
-    public void setupSearch()
-    {
-        searchArtistTextField.textProperty().addListener((obs, oldVal, newVal) ->
-                controller.searchArtist(newVal)
-        );
-
-        searchArtworkTextField.textProperty().addListener((obs, oldVal, newVal) ->
-                controller.searchArtwork(newVal)
-        );
+    public void setStatisticsButton(Button statisticsButton) {
+        this.statisticsButton = statisticsButton;
     }
 
-
-
-    private void setupFilter()
-    {
-
-        filterByArtistBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && !newVal.isEmpty()) {
-                controller.filterArtworksByArtist(newVal);
-            }
-        });
-
-        filterByTypeBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && !newVal.isEmpty()) {
-                controller.filterArtworksByType(newVal);
-            }
-        });
-
-        priceSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
-            controller.filterArtworksByPrice(newVal.doubleValue());
-        });
+    // Artist pane components
+    public AnchorPane getArtistPane() {
+        return artistPane;
     }
 
-
-    private void setupComboBoxes()
-    {
-        typeComboBox.getItems().addAll("Painting", "Sculpture", "Photography");
-        filterByTypeBox.getItems().addAll("Painting", "Sculpture", "Photography");
+    public void setArtistPane(AnchorPane artistPane) {
+        this.artistPane = artistPane;
     }
 
+    public TableView<String[]> getArtistTable() {
+        return artistTable;
+    }
 
+    public void setArtistTable(TableView<String[]> artistTable) {
+        this.artistTable = artistTable;
+    }
 
+    public TableColumn<String[], String> getNameColumn() {
+        return nameColumn;
+    }
+
+    public void setNameColumn(TableColumn<String[], String> nameColumn) {
+        this.nameColumn = nameColumn;
+    }
+
+    public TableColumn<String[], String> getBirthdayColumn() {
+        return birthdayColumn;
+    }
+
+    public void setBirthdayColumn(TableColumn<String[], String> birthdayColumn) {
+        this.birthdayColumn = birthdayColumn;
+    }
+
+    public TableColumn<String[], String> getBirthplaceColumn() {
+        return birthplaceColumn;
+    }
+
+    public void setBirthplaceColumn(TableColumn<String[], String> birthplaceColumn) {
+        this.birthplaceColumn = birthplaceColumn;
+    }
+
+    public TableColumn<String[], String> getNationalityColumn() {
+        return nationalityColumn;
+    }
+
+    public void setNationalityColumn(TableColumn<String[], String> nationalityColumn) {
+        this.nationalityColumn = nationalityColumn;
+    }
+
+    public TableColumn<String[], String> getArtworkListColumn() {
+        return artworkListColumn;
+    }
+
+    public void setArtworkListColumn(TableColumn<String[], String> artworkListColumn) {
+        this.artworkListColumn = artworkListColumn;
+    }
+
+    public TextField getNameTextField() {
+        return nameTextField;
+    }
+
+    public void setNameTextField(TextField nameTextField) {
+        this.nameTextField = nameTextField;
+    }
+
+    public TextField getBirthplaceTextField() {
+        return birthplaceTextField;
+    }
+
+    public void setBirthplaceTextField(TextField birthplaceTextField) {
+        this.birthplaceTextField = birthplaceTextField;
+    }
+
+    public DatePicker getBirthdayDatePicker() {
+        return birthdayDatePicker;
+    }
+
+    public void setBirthdayDatePicker(DatePicker birthdayDatePicker) {
+        this.birthdayDatePicker = birthdayDatePicker;
+    }
+
+    public TextField getNationalityTextField() {
+        return nationalityTextField;
+    }
+
+    public void setNationalityTextField(TextField nationalityTextField) {
+        this.nationalityTextField = nationalityTextField;
+    }
+
+    public TextField getSearchArtistTextField() {
+        return searchArtistTextField;
+    }
+
+    public void setSearchArtistTextField(TextField searchArtistTextField) {
+        this.searchArtistTextField = searchArtistTextField;
+    }
+
+    public Button getAddArtistButton() {
+        return addArtistButton;
+    }
+
+    public void setAddArtistButton(Button addArtistButton) {
+        this.addArtistButton = addArtistButton;
+    }
+
+    public Button getEditArtistButton() {
+        return editArtistButton;
+    }
+
+    public void setEditArtistButton(Button editArtistButton) {
+        this.editArtistButton = editArtistButton;
+    }
+
+    public Button getDeleteArtistButton() {
+        return deleteArtistButton;
+    }
+
+    public void setDeleteArtistButton(Button deleteArtistButton) {
+        this.deleteArtistButton = deleteArtistButton;
+    }
+
+    public Button getClearArtistButton() {
+        return clearArtistButton;
+    }
+
+    public void setClearArtistButton(Button clearArtistButton) {
+        this.clearArtistButton = clearArtistButton;
+    }
+
+    public ImageView getArtistPhoto() {
+        return artistPhoto;
+    }
+
+    public void setArtistPhoto(ImageView artistPhoto) {
+        this.artistPhoto = artistPhoto;
+    }
+
+    // Artwork pane components
+    public AnchorPane getArtworkPane() {
+        return artworkPane;
+    }
+
+    public void setArtworkPane(AnchorPane artworkPane) {
+        this.artworkPane = artworkPane;
+    }
+
+    public TableView<String[]> getArtworkTable() {
+        return artworkTable;
+    }
+
+    public void setArtworkTable(TableView<String[]> artworkTable) {
+        this.artworkTable = artworkTable;
+    }
+
+    public TableColumn<String[], String> getTitleColumn() {
+        return titleColumn;
+    }
+
+    public void setTitleColumn(TableColumn<String[], String> titleColumn) {
+        this.titleColumn = titleColumn;
+    }
+
+    public TableColumn<String[], String> getArtistNameColumn() {
+        return artistNameColumn;
+    }
+
+    public void setArtistNameColumn(TableColumn<String[], String> artistNameColumn) {
+        this.artistNameColumn = artistNameColumn;
+    }
+
+    public TableColumn<String[], String> getTypeColumn() {
+        return typeColumn;
+    }
+
+    public void setTypeColumn(TableColumn<String[], String> typeColumn) {
+        this.typeColumn = typeColumn;
+    }
+
+    public TableColumn<String[], String> getPriceColumn() {
+        return priceColumn;
+    }
+
+    public void setPriceColumn(TableColumn<String[], String> priceColumn) {
+        this.priceColumn = priceColumn;
+    }
+
+    public TableColumn<String[], String> getCreationYearColumn() {
+        return creationYearColumn;
+    }
+
+    public void setCreationYearColumn(TableColumn<String[], String> creationYearColumn) {
+        this.creationYearColumn = creationYearColumn;
+    }
+
+    public TextField getTitleTextField() {
+        return titleTextField;
+    }
+
+    public void setTitleTextField(TextField titleTextField) {
+        this.titleTextField = titleTextField;
+    }
+
+    public ComboBox<String> getArtistComboBox() {
+        return artistComboBox;
+    }
+
+    public void setArtistComboBox(ComboBox<String> artistComboBox) {
+        this.artistComboBox = artistComboBox;
+    }
+
+    public ComboBox<String> getTypeComboBox() {
+        return typeComboBox;
+    }
+
+    public void setTypeComboBox(ComboBox<String> typeComboBox) {
+        this.typeComboBox = typeComboBox;
+    }
+
+    public TextField getPriceTextField() {
+        return priceTextField;
+    }
+
+    public void setPriceTextField(TextField priceTextField) {
+        this.priceTextField = priceTextField;
+    }
+
+    public TextField getYearTextField() {
+        return yearTextField;
+    }
+
+    public void setYearTextField(TextField yearTextField) {
+        this.yearTextField = yearTextField;
+    }
+
+    public TextField getSearchArtworkTextField() {
+        return searchArtworkTextField;
+    }
+
+    public void setSearchArtworkTextField(TextField searchArtworkTextField) {
+        this.searchArtworkTextField = searchArtworkTextField;
+    }
+
+    public ComboBox<String> getFilterByArtistBox() {
+        return filterByArtistBox;
+    }
+
+    public void setFilterByArtistBox(ComboBox<String> filterByArtistBox) {
+        this.filterByArtistBox = filterByArtistBox;
+    }
+
+    public ComboBox<String> getFilterByTypeBox() {
+        return filterByTypeBox;
+    }
+
+    public void setFilterByTypeBox(ComboBox<String> filterByTypeBox) {
+        this.filterByTypeBox = filterByTypeBox;
+    }
+
+    public Button getAddArtworkButton() {
+        return addArtworkButton;
+    }
+
+    public void setAddArtworkButton(Button addArtworkButton) {
+        this.addArtworkButton = addArtworkButton;
+    }
+
+    public Button getEditArtworkButton() {
+        return editArtworkButton;
+    }
+
+    public void setEditArtworkButton(Button editArtworkButton) {
+        this.editArtworkButton = editArtworkButton;
+    }
+
+    public Button getDeleteArtworkButton() {
+        return deleteArtworkButton;
+    }
+
+    public void setDeleteArtworkButton(Button deleteArtworkButton) {
+        this.deleteArtworkButton = deleteArtworkButton;
+    }
+
+    public Button getAddImageButton() {
+        return addImageButton;
+    }
+
+    public void setAddImageButton(Button addImageButton) {
+        this.addImageButton = addImageButton;
+    }
+
+    public Button getClearArtworkButton() {
+        return clearArtworkButton;
+    }
+
+    public void setClearArtworkButton(Button clearArtworkButton) {
+        this.clearArtworkButton = clearArtworkButton;
+    }
+
+    public Button getSaveToCsvButton() {
+        return saveToCsvButton;
+    }
+
+    public void setSaveToCsvButton(Button saveToCsvButton) {
+        this.saveToCsvButton = saveToCsvButton;
+    }
+
+    public Button getSaveToDocButton() {
+        return saveToDocButton;
+    }
+
+    public void setSaveToDocButton(Button saveToDocButton) {
+        this.saveToDocButton = saveToDocButton;
+    }
+
+    public Slider getPriceSlider() {
+        return priceSlider;
+    }
+
+    public void setPriceSlider(Slider priceSlider) {
+        this.priceSlider = priceSlider;
+    }
+
+    public ImageView getArtworkImage1() {
+        return artworkImage1;
+    }
+
+    public void setArtworkImage1(ImageView artworkImage1) {
+        this.artworkImage1 = artworkImage1;
+    }
+
+    public ImageView getArtworkImage2() {
+        return artworkImage2;
+    }
+
+    public void setArtworkImage2(ImageView artworkImage2) {
+        this.artworkImage2 = artworkImage2;
+    }
+
+    // Statistics pane components
+    public AnchorPane getStatisticsPane() {
+        return statisticsPane;
+    }
+
+    public void setStatisticsPane(AnchorPane statisticsPane) {
+        this.statisticsPane = statisticsPane;
+    }
+
+    public BarChart<String, Number> getTypeChart() {
+        return typeChart;
+    }
+
+    public void setTypeChart(BarChart<String, Number> typeChart) {
+        this.typeChart = typeChart;
+    }
+
+    public CategoryAxis getArtworkTypeAxis() {
+        return artworkTypeAxis;
+    }
+
+    public void setArtworkTypeAxis(CategoryAxis artworkTypeAxis) {
+        this.artworkTypeAxis = artworkTypeAxis;
+    }
+
+    public NumberAxis getNrOfArtworksAxis() {
+        return nrOfArtworksAxis;
+    }
+
+    public void setNrOfArtworksAxis(NumberAxis nrOfArtworksAxis) {
+        this.nrOfArtworksAxis = nrOfArtworksAxis;
+    }
+
+    public BarChart<String, Number> getArtistChart() {
+        return artistChart;
+    }
+
+    public void setArtistChart(BarChart<String, Number> artistChart) {
+        this.artistChart = artistChart;
+    }
+
+    public CategoryAxis getArtistAxis() {
+        return artistAxis;
+    }
+
+    public void setArtistAxis(CategoryAxis artistAxis) {
+        this.artistAxis = artistAxis;
+    }
+
+    public NumberAxis getNumberOfArtworksAxis() {
+        return numberOfArtworksAxis;
+    }
+
+    public void setNumberOfArtworksAxis(NumberAxis numberOfArtworksAxis) {
+        this.numberOfArtworksAxis = numberOfArtworksAxis;
+    }
 
 
     // === Observer implementation ===
     @Override
     public void update(Observable obs)
     {
-        controller.refreshView();
-    }
-
-
-    // Public update methods (invoked from controller)
-    public void updateArtistList(List<String[]> artists)
-    {
-        artistTable.setItems(FXCollections.observableArrayList(artists));
-    }
-
-    public void updateArtworkList(List<String[]> artworks)
-    {
-        artworkTable.setItems(FXCollections.observableArrayList(artworks));
-
-        controller.generateStatistics();
 
     }
 
 
-    public void updateArtistComboBoxes(List<String> artistNames)
-    {
-        artistComboBox.setItems(FXCollections.observableArrayList(artistNames));
-        filterByArtistBox.setItems(FXCollections.observableArrayList(artistNames));
-    }
-
-
-
-
-    private void displayArtworkImages(String artworkTitle)
-    {
-        List<String> imagePaths = controller.getArtworkImagePaths(artworkTitle);
-
-        artworkImage1.setImage(imagePaths.size() > 0 ? safeLoadImage(imagePaths.get(0)) : null);
-        artworkImage2.setImage(imagePaths.size() > 1 ? safeLoadImage(imagePaths.get(1)) : null);
-
-    }
-
-
-
-
-
-
-
-    // === Button handlers ===
-
-    @FXML
-    private void clickArtistButton(ActionEvent event)
-    {
-        artistPane.setVisible(true);
-        artworkPane.setVisible(false);
-        statisticsPane.setVisible(false);
-    }
-
-    @FXML
-    private void clickArtworkButton(ActionEvent event)
-    {
-        artistPane.setVisible(false);
-        artworkPane.setVisible(true);
-        statisticsPane.setVisible(false);
-    }
-
-    @FXML
-    private void clickStatisticsButton(ActionEvent event)
-    {
-        artistPane.setVisible(false);
-        artworkPane.setVisible(false);
-        statisticsPane.setVisible(true);
-    }
-
-
-    // === ARTIST BUTTON ACTIONS ===
-
-    @FXML
-    private void clickAddArtist(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Artist Photo");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
-        );
-
-        File file = fileChooser.showOpenDialog(null);
-        String photoPath = (file != null) ? file.toURI().toString() : "";
-
-        controller.addArtist(
-                nameTextField.getText(),
-                birthdayDatePicker.getValue() != null ? birthdayDatePicker.getValue().toString() : "",
-                birthplaceTextField.getText(),
-                nationalityTextField.getText(),
-                photoPath
-        );
-    }
-
-
-
-    @FXML
-    private void clickEditArtist(ActionEvent event)
-    {
-        String[] selected = artistTable.getSelectionModel().getSelectedItem();
-        controller.updateArtist(
-                selected[0],
-                nameTextField.getText(),
-                birthdayDatePicker.getValue() != null ? birthdayDatePicker.getValue().toString() : "",
-                birthplaceTextField.getText(),
-                nationalityTextField.getText()
-            );
-
-    }
-
-    @FXML
-    private void clickDeleteArtist(ActionEvent event)
-    {
-
-        controller.deleteArtist(nameTextField.getText());
-
-    }
-
-
-
-
-    // === ARTWORK BUTTON ACTIONS ===
-
-    @FXML
-    private void clickAddArtwork(ActionEvent event)
-    {
-        controller.addArtwork(
-                titleTextField.getText(),
-                artistComboBox.getValue(),
-                typeComboBox.getValue(),
-                Double.parseDouble(priceTextField.getText()),
-                Integer.parseInt(yearTextField.getText())
-        );
-
-    }
-
-    @FXML private void clickEditArtwork(ActionEvent event)
-    {
-        String[] selected = artworkTable.getSelectionModel().getSelectedItem();
-
-        controller.updateArtwork(
-                selected[0],
-                titleTextField.getText(),
-                artistComboBox.getValue(),
-                typeComboBox.getValue(),
-                Double.parseDouble(priceTextField.getText()),
-                Integer.parseInt(yearTextField.getText())
-            );
-
-    }
-
-    @FXML private void clickDeleteArtwork(ActionEvent event)
-    {
-        controller.deleteArtwork(titleTextField.getText());
-
-    }
-
-
-
-    @FXML
-    public void clickAddImage(ActionEvent event) {
-        String artworkTitle = titleTextField.getText();
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Image");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
-        );
-
-        File file = fileChooser.showOpenDialog(null); // poate fi înlocuit cu stage dacă e nevoie
-
-        controller.addImageToArtwork(artworkTitle, file.getAbsolutePath());
-
-    }
-
-
-    @FXML
-    public void clickSaveToCsv(ActionEvent actionEvent)
-    {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save as CSV");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-        File file = fileChooser.showSaveDialog(null);
-
-        controller.saveToCsv(file.getAbsolutePath());
-
-    }
-
-    @FXML
-    public void clickSaveToDoc(ActionEvent actionEvent)
-    {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save as Text Document");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-        File file = fileChooser.showSaveDialog(null);
-
-        controller.saveToDoc(file.getAbsolutePath());
-
-    }
-
-
-
-
-
-
-    // === HELPER===
-
-
-    private Image safeLoadImage(String path)
-    {
-        if (path == null || path.isBlank()) return null;
-        String fixedPath = path.startsWith("file:") ? path : "file:" + path;
-        try {
-            return new Image(fixedPath);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
-    @FXML
-    private void clickClearArtist(ActionEvent event)
-    {
-        nameTextField.clear();
-        birthplaceTextField.clear();
-        birthdayDatePicker.setValue(null);
-        nationalityTextField.clear();
-        searchArtistTextField.clear();
-    }
-
-
-    @FXML private void clickClearArtwork(ActionEvent event)
-    {
-        titleTextField.clear();
-        artistComboBox.setValue(null);
-        typeComboBox.setValue(null);
-        priceTextField.clear();
-        yearTextField.clear();
-        searchArtworkTextField.clear();
-        filterByArtistBox.setValue(null);
-        filterByTypeBox.setValue(null);
-    }
-
-
-
-
-
-    public void displayStatistics(Map<String, Integer> typeData, Map<String, Integer> artistData)
-    {
-        typeChart.getData().clear();
-        artistChart.getData().clear();
-
-        XYChart.Series<String, Number> typeSeries = new XYChart.Series<>();
-        for (Map.Entry<String, Integer> entry : typeData.entrySet())
-        {
-            typeSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-        }
-        typeChart.getData().add(typeSeries);
-
-        XYChart.Series<String, Number> artistSeries = new XYChart.Series<>();
-        for (Map.Entry<String, Integer> entry : artistData.entrySet())
-        {
-            artistSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-        }
-        artistChart.getData().add(artistSeries);
-    }
 
 }

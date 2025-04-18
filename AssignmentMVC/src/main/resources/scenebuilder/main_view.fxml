@@ -24,17 +24,17 @@
          <children>
             <VBox alignment="CENTER" layoutX="19.0" layoutY="183.0" prefHeight="291.0" prefWidth="135.0" spacing="20.0">
                <children>
-                  <Button fx:id="artistButton" mnemonicParsing="false" onAction="#clickArtistButton" prefHeight="46.0" prefWidth="123.0" style="-fx-background-color: #546E7A;" text="Artists" textFill="WHITE">
+                  <Button fx:id="artistButton" mnemonicParsing="false" prefHeight="46.0" prefWidth="123.0" style="-fx-background-color: #546E7A;" text="Artists" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="17.0" />
                      </font>
                   </Button>
-                  <Button fx:id="artworkButton" mnemonicParsing="false" onAction="#clickArtworkButton" prefHeight="46.0" prefWidth="126.0" style="-fx-background-color: #546E7A;" text="Artworks" textFill="WHITE">
+                  <Button fx:id="artworkButton" mnemonicParsing="false" prefHeight="46.0" prefWidth="126.0" style="-fx-background-color: #546E7A;" text="Artworks" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="17.0" />
                      </font>
                   </Button>
-                  <Button fx:id="statisticsButton" mnemonicParsing="false" onAction="#clickStatisticsButton" prefHeight="46.0" prefWidth="123.0" style="-fx-background-color: #546E7A;" text="Statistics" textFill="WHITE">
+                  <Button fx:id="statisticsButton" mnemonicParsing="false" prefHeight="46.0" prefWidth="123.0" style="-fx-background-color: #546E7A;" text="Statistics" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="17.0" />
                      </font>
@@ -109,22 +109,22 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="183.0" prefHeight="51.0" prefWidth="292.0" spacing="10.0">
                      <children>
-                        <Button fx:id="addArtistButton" mnemonicParsing="false" onAction="#clickAddArtist" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Add">
+                        <Button fx:id="addArtistButton" mnemonicParsing="false" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Add">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="editArtistButton" mnemonicParsing="false" onAction="#clickEditArtist" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Edit">
+                        <Button fx:id="editArtistButton" mnemonicParsing="false" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Edit">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="deleteArtistButton" mnemonicParsing="false" onAction="#clickDeleteArtist" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Delete">
+                        <Button fx:id="deleteArtistButton" mnemonicParsing="false" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Delete">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="clearArtistButton" mnemonicParsing="false" onAction="#clickClearArtist" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Clear">
+                        <Button fx:id="clearArtistButton" mnemonicParsing="false" prefHeight="33.0" prefWidth="62.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Clear">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -138,7 +138,7 @@
                   </VBox>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="artworkPane" layoutX="-3.0" prefHeight="730.0" prefWidth="875.0" style="-fx-background-color: #546E7A;" visible="false">
+            <AnchorPane fx:id="artworkPane" layoutX="-3.0" prefHeight="730.0" prefWidth="875.0" style="-fx-background-color: #546E7A;">
                <children>
                   <HBox layoutX="1.0" layoutY="348.0" prefHeight="382.0" prefWidth="873.0" spacing="10.0" style="-fx-background-color: #CFD8DC;">
                      <children>
@@ -206,27 +206,27 @@
                   </HBox>
                   <HBox alignment="CENTER" layoutX="14.0" layoutY="240.0" prefHeight="47.0" prefWidth="423.0" spacing="10.0">
                      <children>
-                        <Button fx:id="addArtworkButton" mnemonicParsing="false" onAction="#clickAddArtwork" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Add">
+                        <Button fx:id="addArtworkButton" mnemonicParsing="false" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Add">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="editArtworkButton" mnemonicParsing="false" onAction="#clickEditArtwork" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Edit">
+                        <Button fx:id="editArtworkButton" mnemonicParsing="false" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Edit">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="deleteArtworkButton" mnemonicParsing="false" onAction="#clickDeleteArtwork" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Delete">
+                        <Button fx:id="deleteArtworkButton" mnemonicParsing="false" prefHeight="34.0" prefWidth="66.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Delete">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="addImageButton" mnemonicParsing="false" onAction="#clickAddImage" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Add Image">
+                        <Button fx:id="addImageButton" mnemonicParsing="false" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Add Image">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="clearArtworkButton" mnemonicParsing="false" onAction="#clickClearArtwork" prefHeight="34.0" prefWidth="69.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Clear">
+                        <Button fx:id="clearArtworkButton" mnemonicParsing="false" prefHeight="34.0" prefWidth="69.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Clear">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -244,12 +244,12 @@
                         <ComboBox fx:id="filterByTypeBox" prefHeight="26.0" prefWidth="123.0" promptText="Filter by Type" style="-fx-background-color: #FFFFFF;" />
                      </children>
                   </HBox>
-                  <Button fx:id="saveToCsvButton" layoutX="619.0" layoutY="300.0" mnemonicParsing="false" onAction="#clickSaveToCsv" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Save to csv">
+                  <Button fx:id="saveToCsvButton" layoutX="619.0" layoutY="300.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Save to csv">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="saveToDocButton" layoutX="735.0" layoutY="300.0" mnemonicParsing="false" onAction="#clickSaveToDoc" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Save to doc">
+                  <Button fx:id="saveToDocButton" layoutX="735.0" layoutY="300.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: #CFD8DC; -fx-background-radius: 9;" text="Save to doc">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -262,7 +262,7 @@
                   </HBox>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="statisticsPane" layoutX="1.0" prefHeight="733.0" prefWidth="871.0" style="-fx-background-color: #546E7A;">
+            <AnchorPane fx:id="statisticsPane" layoutX="1.0" prefHeight="733.0" prefWidth="871.0" style="-fx-background-color: #546E7A;" visible="false">
                <children>
                   <VBox alignment="CENTER" layoutX="7.0" layoutY="7.0" prefHeight="722.0" prefWidth="858.0">
                      <children>
