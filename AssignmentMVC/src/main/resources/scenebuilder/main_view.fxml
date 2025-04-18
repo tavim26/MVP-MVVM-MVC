@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.BubbleChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -267,9 +266,9 @@
                <children>
                   <VBox alignment="CENTER" layoutX="7.0" layoutY="7.0" prefHeight="722.0" prefWidth="858.0">
                      <children>
-                        <BarChart fx:id="typeChart" prefHeight="397.0" prefWidth="755.0" title="Type Chart">
+                        <BarChart fx:id="typeChart" legendVisible="false" prefHeight="397.0" prefWidth="755.0" title="Type Chart">
                           <xAxis>
-                            <CategoryAxis fx:id="artworkTypeAxis" label="Artwork Types" side="BOTTOM" tickLabelFill="WHITE">
+                            <CategoryAxis fx:id="artworkTypeAxis" side="BOTTOM" tickLabelFill="WHITE">
                                  <tickLabelFont>
                                     <Font name="System Bold" size="15.0" />
                                  </tickLabelFont>
@@ -283,22 +282,22 @@
                               </NumberAxis>
                           </yAxis>
                         </BarChart>
-                        <BubbleChart fx:id="priceChart" prefHeight="393.0" prefWidth="858.0" title="Price Chart">
-                          <xAxis>
-                            <NumberAxis fx:id="numberOfArtworksAxis" label="Number of Artworks" lowerBound="1.0" side="BOTTOM" tickLabelFill="WHITE" upperBound="10.0">
+                        <BarChart fx:id="artistChart" legendVisible="false" prefHeight="397.0" prefWidth="755.0" title="Artist Chart">
+                           <xAxis>
+                              <CategoryAxis fx:id="artistAxis" side="BOTTOM" tickLabelFill="WHITE">
+                                 <tickLabelFont>
+                                    <Font name="System Bold" size="10.0" />
+                                 </tickLabelFont>
+                              </CategoryAxis>
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis fx:id="numberOfArtworksAxis" label="Number of Artworks" side="LEFT" tickLabelFill="WHITE" upperBound="10.0">
                                  <tickLabelFont>
                                     <Font size="10.0" />
                                  </tickLabelFont>
                               </NumberAxis>
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis fx:id="priceAxis" label="Price" lowerBound="1000.0" side="LEFT" tickLabelFill="WHITE" upperBound="10000.0">
-                                 <tickLabelFont>
-                                    <Font size="10.0" />
-                                 </tickLabelFont>
-                              </NumberAxis>
-                          </yAxis>
-                        </BubbleChart>
+                           </yAxis>
+                        </BarChart>
                      </children>
                   </VBox>
                </children>

@@ -4,6 +4,7 @@ import Model.ViewModel.GalleryViewModel;
 import View.GalleryView;
 
 import java.util.List;
+import java.util.Map;
 
 public class GalleryController {
 
@@ -30,8 +31,8 @@ public class GalleryController {
         viewModel.addArtist(name, birthDate, birthPlace, nationality, photo);
     }
 
-    public void updateArtist(String oldName, String name, String birthDate, String birthPlace, String nationality, String photo) {
-        viewModel.updateArtist(oldName, name, birthDate, birthPlace, nationality, photo);
+    public void updateArtist(String oldName, String name, String birthDate, String birthPlace, String nationality) {
+        viewModel.updateArtist(oldName, name, birthDate, birthPlace, nationality);
     }
 
     public void deleteArtist(String name) {
@@ -94,5 +95,13 @@ public class GalleryController {
 
     public void saveToDoc(String path) {
         viewModel.saveToDoc(path);
+    }
+
+
+    public void generateStatistics()
+    {
+        Map<String, Integer> typeData = viewModel.getArtworkCountsByType();
+        Map<String, Integer> artistData = viewModel.getArtworkCountsByArtist();
+        view.displayStatistics(typeData, artistData);
     }
 }

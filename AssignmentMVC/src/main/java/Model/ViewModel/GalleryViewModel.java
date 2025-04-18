@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GalleryViewModel extends Observable {
 
@@ -44,7 +46,7 @@ public class GalleryViewModel extends Observable {
         notifyObservers();
     }
 
-    // === Public GETTERS (pentru Controller) ===
+    // === Public GETTERS ===
 
     public List<String[]> getArtist() {
         List<String[]> data = new ArrayList<>();
@@ -165,9 +167,10 @@ public class GalleryViewModel extends Observable {
         loadData();
     }
 
-    public void updateArtist(String oldName, String name, String birthDate, String birthPlace, String nationality, String photo) {
+    public void updateArtist(String oldName, String name, String birthDate, String birthPlace, String nationality)
+    {
         try {
-            artistRepo.updateArtist(oldName, new Artist(name, birthDate, birthPlace, nationality, photo));
+            artistRepo.updateArtist(oldName, new Artist(name, birthDate, birthPlace, nationality,""));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -274,4 +277,32 @@ public class GalleryViewModel extends Observable {
             e.printStackTrace();
         }
     }
+
+
+
+
+
+    public Map<String, Integer> getArtworkCountsByType()
+    {
+        Map<String, Integer> result = new HashMap<>();
+
+        for (Artwork a : artworks)
+        {
+            result.put(a.getType(), result.getOrDefault(a.getType(), 0) + 1);
+        }
+        return result;
+    }
+
+    public Map<String, Integer> getArtworkCountsByArtist()
+    {
+        Map<String, Integer> result = new HashMap<>();
+
+        for (Artwork a : artworks)
+        {
+            String artistName = a.getArtist().getName();
+            result.put(artistName, result.getOrDefault(artistName, 0) + 1);
+        }
+        return result;
+    }
+
 }

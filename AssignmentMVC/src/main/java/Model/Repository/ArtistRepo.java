@@ -54,7 +54,7 @@ public class ArtistRepo
     }
 
     public void updateArtist(String oldName, Artist updatedArtist) throws SQLException {
-        String sql = "UPDATE Artist SET name = ?, birth_date = ?, birth_place = ?, nationality = ?, photo = ? WHERE name = ?";
+        String sql = "UPDATE Artist SET name = ?, birth_date = ?, birth_place = ?, nationality = ? WHERE name = ?";
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -62,8 +62,7 @@ public class ArtistRepo
             stmt.setString(2, updatedArtist.getBirthDate());
             stmt.setString(3, updatedArtist.getBirthPlace());
             stmt.setString(4, updatedArtist.getNationality());
-            stmt.setString(5, updatedArtist.getPhoto());
-            stmt.setString(6, oldName);
+            stmt.setString(5, oldName);
             stmt.executeUpdate();
         }
     }

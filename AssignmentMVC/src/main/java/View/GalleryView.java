@@ -5,16 +5,11 @@ import Controller.GalleryController;
 import Model.Observer.Observable;
 import Model.Observer.Observer;
 
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.BubbleChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,6 +19,7 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class GalleryView implements Observer
 {
@@ -88,13 +84,13 @@ public class GalleryView implements Observer
 
     // Statistics pane components
     @FXML private AnchorPane statisticsPane;
-    @FXML private BarChart<?, ?> typeChart;
+    @FXML private BarChart<String, Number> typeChart;
     @FXML private CategoryAxis artworkTypeAxis;
     @FXML private NumberAxis nrOfArtworksAxis;
-    @FXML private BubbleChart<?, ?> priceChart;
-    @FXML private NumberAxis numberOfArtworksAxis;
-    @FXML private NumberAxis priceAxis;
 
+    @FXML private BarChart<String, Number> artistChart;
+    @FXML private CategoryAxis artistAxis;
+    @FXML private NumberAxis numberOfArtworksAxis;
 
     @FXML
     public void initialize()
@@ -104,22 +100,28 @@ public class GalleryView implements Observer
         setupSearch();
         setupFilter();
         setupComboBoxes();
+
     }
 
 
 
-    private void setupArtistTable() {
+    private void setupArtistTable()
+    {
         nameColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[0]));
         birthdayColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[1]));
         birthplaceColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[2]));
         nationalityColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[3]));
 
         artistTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-            if (newSel != null) populateArtistFields(newSel);
+
+            if(newSel != null) {
+                populateArtistFields(newSel);
+            }
         });
     }
 
-    private void setupArtworkTable() {
+    private void setupArtworkTable()
+    {
         titleColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[0]));
         artistNameColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[1]));
         typeColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[2]));
@@ -127,20 +129,27 @@ public class GalleryView implements Observer
         creationYearColumn.setCellValueFactory(c -> new SimpleStringProperty(c.getValue()[4]));
 
         artworkTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-            if (newSel != null) populateArtworkFields(newSel);
+            if (newSel != null)
+            {
+                populateArtworkFields(newSel);
+            }
+
+
         });
     }
 
 
-    private void populateArtistFields(String[] data) {
+    private void populateArtistFields(String[] data)
+    {
         nameTextField.setText(data[0]);
         birthdayDatePicker.setValue(LocalDate.parse(data[1]));
         birthplaceTextField.setText(data[2]);
         nationalityTextField.setText(data[3]);
-        artistPhoto.setImage(data[4] != null && !data[4].isEmpty() ? new Image(data[4]) : null);
+        artistPhoto.setImage(data[4] != null && !data[4].isBlank() ? safeLoadImage(data[4]) : null);
     }
 
-    private void populateArtworkFields(String[] data) {
+    private void populateArtworkFields(String[] data)
+    {
         titleTextField.setText(data[0]);
         artistComboBox.setValue(data[1]);
         typeComboBox.setValue(data[2]);
@@ -203,16 +212,22 @@ public class GalleryView implements Observer
 
 
     // Public update methods (invoked from controller)
-    public void updateArtistList(List<String[]> artists) {
+    public void updateArtistList(List<String[]> artists)
+    {
         artistTable.setItems(FXCollections.observableArrayList(artists));
     }
 
-    public void updateArtworkList(List<String[]> artworks) {
+    public void updateArtworkList(List<String[]> artworks)
+    {
         artworkTable.setItems(FXCollections.observableArrayList(artworks));
+
+        controller.generateStatistics();
+
     }
 
 
-    public void updateArtistComboBoxes(List<String> artistNames) {
+    public void updateArtistComboBoxes(List<String> artistNames)
+    {
         artistComboBox.setItems(FXCollections.observableArrayList(artistNames));
         filterByArtistBox.setItems(FXCollections.observableArrayList(artistNames));
     }
@@ -224,9 +239,11 @@ public class GalleryView implements Observer
     {
         List<String> imagePaths = controller.getArtworkImagePaths(artworkTitle);
 
-        artworkImage1.setImage(imagePaths.size() > 0 ? new Image(imagePaths.get(0)) : null);
-        artworkImage2.setImage(imagePaths.size() > 1 ? new Image(imagePaths.get(1)) : null);
+        artworkImage1.setImage(imagePaths.size() > 0 ? safeLoadImage(imagePaths.get(0)) : null);
+        artworkImage2.setImage(imagePaths.size() > 1 ? safeLoadImage(imagePaths.get(1)) : null);
+
     }
+
 
 
 
@@ -293,8 +310,7 @@ public class GalleryView implements Observer
                 nameTextField.getText(),
                 birthdayDatePicker.getValue() != null ? birthdayDatePicker.getValue().toString() : "",
                 birthplaceTextField.getText(),
-                nationalityTextField.getText(),
-                ""
+                nationalityTextField.getText()
             );
 
     }
@@ -394,7 +410,20 @@ public class GalleryView implements Observer
 
 
 
-    // === HELPER BUTTON ACTIONS ===
+    // === HELPER===
+
+
+    private Image safeLoadImage(String path)
+    {
+        if (path == null || path.isBlank()) return null;
+        String fixedPath = path.startsWith("file:") ? path : "file:" + path;
+        try {
+            return new Image(fixedPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
     @FXML
@@ -424,5 +453,24 @@ public class GalleryView implements Observer
 
 
 
+    public void displayStatistics(Map<String, Integer> typeData, Map<String, Integer> artistData)
+    {
+        typeChart.getData().clear();
+        artistChart.getData().clear();
+
+        XYChart.Series<String, Number> typeSeries = new XYChart.Series<>();
+        for (Map.Entry<String, Integer> entry : typeData.entrySet())
+        {
+            typeSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        }
+        typeChart.getData().add(typeSeries);
+
+        XYChart.Series<String, Number> artistSeries = new XYChart.Series<>();
+        for (Map.Entry<String, Integer> entry : artistData.entrySet())
+        {
+            artistSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        }
+        artistChart.getData().add(artistSeries);
+    }
 
 }
