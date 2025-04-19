@@ -2,13 +2,8 @@ package Controller;
 
 import Model.ViewModel.GalleryViewModel;
 import View.GalleryView;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.XYChart;
-import javafx.stage.FileChooser;
 
-import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 public class GalleryController
 {
@@ -22,12 +17,17 @@ public class GalleryController
         this.view = view;
         this.viewModel.addObserver(view);
 
+        setupTableColumns();
         initializeEventHandlers();
+        setupTableListeners();
+        setupComboBoxes();
+
     }
 
 
-    private void initializeEventHandlers() {
-        // Navigare între tab-uri
+    private void initializeEventHandlers()
+    {
+
         view.getArtistButton().setOnAction(e -> showArtistPane());
         view.getArtworkButton().setOnAction(e -> showArtworkPane());
         view.getStatisticsButton().setOnAction(e -> showStatisticsPane());
@@ -52,7 +52,7 @@ public class GalleryController
         // Imagini
         view.getAddImageButton().setOnAction(e -> handleAddImageToArtwork());
 
-        // Filtrare/Căutare
+        // Filtrare/Search
         view.getSearchArtistTextField().textProperty().addListener((obs, old, val) -> searchArtist(val));
         view.getSearchArtworkTextField().textProperty().addListener((obs, old, val) -> searchArtwork(val));
 
@@ -70,19 +70,94 @@ public class GalleryController
     }
 
 
-    private void showArtistPane() {
+    private void setupTableColumns() {
+        // ARTIST
+        view.getNameColumn().setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue()[0]));
+        view.getBirthdayColumn().setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue()[1]));
+        view.getBirthplaceColumn().setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue()[2]));
+        view.getNationalityColumn().setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue()[3]));
+
+        // ARTWORK
+        view.getTitleColumn().setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue()[0]));
+        view.getArtistNameColumn().setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue()[1]));
+        view.getTypeColumn().setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue()[2]));
+        view.getPriceColumn().setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue()[3]));
+        view.getCreationYearColumn().setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue()[4]));
+    }
+
+
+    private void setupTableListeners() {
+        view.getArtistTable().getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+            if (selected != null) {
+                view.getNameTextField().setText(selected[0]);
+                view.getBirthdayDatePicker().setValue(java.time.LocalDate.parse(selected[1]));
+                view.getBirthplaceTextField().setText(selected[2]);
+                view.getNationalityTextField().setText(selected[3]);
+
+                String photoPath = selected[4];
+                if (photoPath != null && !photoPath.isBlank()) {
+                    view.getArtistPhoto().setImage(new javafx.scene.image.Image(photoPath));
+                } else {
+                    view.getArtistPhoto().setImage(null);
+                }
+            }
+        });
+
+        view.getArtworkTable().getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+            if (selected != null) {
+                view.getTitleTextField().setText(selected[0]);
+                view.getArtistComboBox().setValue(selected[1]);
+                view.getTypeComboBox().setValue(selected[2]);
+                view.getPriceTextField().setText(selected[3]);
+                view.getYearTextField().setText(selected[4]);
+
+                List<String> paths = viewModel.getArtworkImagePaths(selected[0]);
+                if (paths.size() > 0) {
+                    view.getArtworkImage1().setImage(new javafx.scene.image.Image(paths.get(0)));
+
+                } else {
+                    view.getArtworkImage1().setImage(null);
+                }
+
+                if (paths.size() > 1) {
+                    view.getArtworkImage2().setImage(new javafx.scene.image.Image(paths.get(1)));
+
+                } else {
+                    view.getArtworkImage2().setImage(null);
+                }
+
+            }
+        });
+    }
+
+    private void setupComboBoxes()
+    {
+        List<String> artworkTypes = List.of("Painting", "Sculpture", "Photography");
+
+        view.getTypeComboBox().setItems(javafx.collections.FXCollections.observableArrayList(artworkTypes));
+        view.getFilterByTypeBox().setItems(javafx.collections.FXCollections.observableArrayList(artworkTypes));
+    }
+
+
+
+
+
+    private void showArtistPane()
+    {
         view.getArtistPane().setVisible(true);
         view.getArtworkPane().setVisible(false);
         view.getStatisticsPane().setVisible(false);
     }
 
-    private void showArtworkPane() {
+    private void showArtworkPane()
+    {
         view.getArtistPane().setVisible(false);
         view.getArtworkPane().setVisible(true);
         view.getStatisticsPane().setVisible(false);
     }
 
-    private void showStatisticsPane() {
+    private void showStatisticsPane()
+    {
         view.getArtistPane().setVisible(false);
         view.getArtworkPane().setVisible(false);
         view.getStatisticsPane().setVisible(true);
@@ -92,14 +167,7 @@ public class GalleryController
 // === ARTIST ===
 
     private void handleAddArtist() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Artist Photo");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
-        );
-        File file = fileChooser.showOpenDialog(null);
-        String photoPath = (file != null) ? file.toURI().toString() : "";
-
+        String photoPath = view.selectImageFile("Select Artist Photo");
         viewModel.addArtist(
                 view.getNameTextField().getText(),
                 view.getBirthdayDatePicker().getValue() != null ? view.getBirthdayDatePicker().getValue().toString() : "",
@@ -108,6 +176,7 @@ public class GalleryController
                 photoPath
         );
     }
+
 
     private void handleEditArtist() {
         String[] selected = view.getArtistTable().getSelectionModel().getSelectedItem();
@@ -122,11 +191,13 @@ public class GalleryController
         );
     }
 
-    private void handleDeleteArtist() {
+    private void handleDeleteArtist()
+    {
         viewModel.deleteArtist(view.getNameTextField().getText());
     }
 
-    private void clearArtistFields() {
+    private void clearArtistFields()
+    {
         view.getNameTextField().clear();
         view.getBirthdayDatePicker().setValue(null);
         view.getBirthplaceTextField().clear();
@@ -135,7 +206,8 @@ public class GalleryController
         view.getArtistPhoto().setImage(null);
     }
 
-    private void searchArtist(String keyword) {
+    private void searchArtist(String keyword)
+    {
         List<String[]> results = (keyword == null || keyword.isBlank())
                 ? viewModel.getArtist()
                 : viewModel.searchArtist(keyword);
@@ -144,7 +216,8 @@ public class GalleryController
 
 // === ARTWORK ===
 
-    private void handleAddArtwork() {
+    private void handleAddArtwork()
+    {
         try {
             viewModel.addArtwork(
                     view.getTitleTextField().getText(),
@@ -154,11 +227,12 @@ public class GalleryController
                     Integer.parseInt(view.getYearTextField().getText())
             );
         } catch (NumberFormatException ex) {
-            ex.printStackTrace(); // Poți adăuga alertă pentru UI
+            ex.printStackTrace();
         }
     }
 
-    private void handleEditArtwork() {
+    private void handleEditArtwork()
+    {
         String[] selected = view.getArtworkTable().getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
@@ -215,59 +289,34 @@ public class GalleryController
 
     private void handleAddImageToArtwork() {
         String artworkTitle = view.getTitleTextField().getText();
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Image");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
-        );
-        File file = fileChooser.showOpenDialog(null);
-        if (file != null) {
-            viewModel.addImageToArtwork(artworkTitle, file.getAbsolutePath());
+        String imagePath = view.selectImageFile("Select Artwork Image");
+        if (!imagePath.isEmpty()) {
+            viewModel.addImageToArtwork(artworkTitle, imagePath);
         }
     }
+
 
 // === EXPORT ===
 
     private void handleSaveToCsv() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save as CSV");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-        File file = fileChooser.showSaveDialog(null);
-        if (file != null) viewModel.saveToCsv(file.getAbsolutePath());
+        String path = view.selectSaveFile("Save as CSV", "*.csv", "CSV Files");
+        if (!path.isEmpty()) viewModel.saveToCsv(path);
     }
 
     private void handleSaveToDoc() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save as Text Document");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
-        File file = fileChooser.showSaveDialog(null);
-        if (file != null) viewModel.saveToDoc(file.getAbsolutePath());
+        String path = view.selectSaveFile("Save as Text Document", "*.txt", "Text Files");
+        if (!path.isEmpty()) viewModel.saveToDoc(path);
     }
+
 
 // === STATISTICS ===
 
     public void generateStatistics() {
         var typeData = viewModel.getArtworkCountsByType();
         var artistData = viewModel.getArtworkCountsByArtist();
-
-        BarChart<String, Number> typeChart = view.getTypeChart();
-        BarChart<String, Number> artistChart = view.getArtistChart();
-
-        typeChart.getData().clear();
-        artistChart.getData().clear();
-
-        XYChart.Series<String, Number> typeSeries = new XYChart.Series<>();
-        for (var entry : typeData.entrySet()) {
-            typeSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-        }
-        typeChart.getData().add(typeSeries);
-
-        XYChart.Series<String, Number> artistSeries = new XYChart.Series<>();
-        for (var entry : artistData.entrySet()) {
-            artistSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-        }
-        artistChart.getData().add(artistSeries);
+        view.displayStatistics(typeData, artistData);
     }
+
 
 
 

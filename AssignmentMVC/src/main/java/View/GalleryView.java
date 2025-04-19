@@ -3,11 +3,17 @@ package View;
 import Model.Observer.Observable;
 import Model.Observer.Observer;
 
+import Model.ViewModel.GalleryViewModel;
+
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.util.Map;
 
 
 public class GalleryView implements Observer
@@ -73,6 +79,25 @@ public class GalleryView implements Observer
     @FXML private BarChart<String, Number> artistChart;
     @FXML private CategoryAxis artistAxis;
     @FXML private NumberAxis numberOfArtworksAxis;
+
+
+
+
+    @Override
+    public void update(Observable obs)
+    {
+        if (!(obs instanceof GalleryViewModel viewModel)) return;
+
+        var artistData = javafx.collections.FXCollections.observableArrayList(viewModel.getArtist());
+        artistTable.setItems(artistData);
+
+        var artworkData = javafx.collections.FXCollections.observableArrayList(viewModel.getArtwork());
+        artworkTable.setItems(artworkData);
+
+        var artistNames = javafx.collections.FXCollections.observableArrayList(viewModel.getArtistNames());
+        artistComboBox.setItems(artistNames);
+        filterByArtistBox.setItems(artistNames);
+    }
 
 
     // Left pane buttons
@@ -496,12 +521,42 @@ public class GalleryView implements Observer
     }
 
 
-    // === Observer implementation ===
-    @Override
-    public void update(Observable obs)
-    {
-
+    public String selectImageFile(String title) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(title);
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
+        );
+        File file = fileChooser.showOpenDialog(null);
+        return file != null ? file.toURI().toString() : "";
     }
+
+
+    public String selectSaveFile(String title, String ext, String desc) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(title);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(desc, ext));
+        File file = fileChooser.showSaveDialog(null);
+        return file != null ? file.getAbsolutePath() : "";
+    }
+
+    public void displayStatistics(Map<String, Integer> typeData, Map<String, Integer> artistData) {
+        typeChart.getData().clear();
+        artistChart.getData().clear();
+
+        XYChart.Series<String, Number> typeSeries = new XYChart.Series<>();
+        typeData.forEach((type, count) -> typeSeries.getData().add(new XYChart.Data<>(type, count)));
+        typeChart.getData().add(typeSeries);
+
+        XYChart.Series<String, Number> artistSeries = new XYChart.Series<>();
+        artistData.forEach((artist, count) -> artistSeries.getData().add(new XYChart.Data<>(artist, count)));
+        artistChart.getData().add(artistSeries);
+    }
+
+
+
+
+
 
 
 
