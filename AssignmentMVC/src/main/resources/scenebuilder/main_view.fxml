@@ -47,17 +47,16 @@
    <center>
       <AnchorPane prefHeight="594.0" prefWidth="715.0" style="-fx-background-color: #ECEFF1;;" BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane fx:id="artistPane" layoutX="2.0" layoutY="1.0" prefHeight="729.0" prefWidth="870.0" style="-fx-background-color: #546E7A;" visible="false">
+            <AnchorPane fx:id="artistPane" layoutX="2.0" layoutY="1.0" prefHeight="729.0" prefWidth="870.0" style="-fx-background-color: #546E7A;">
                <children>
-                  <HBox alignment="TOP_CENTER" layoutY="322.0" prefHeight="405.0" prefWidth="870.0" style="-fx-background-color: #CFD8DC;">
+                  <HBox alignment="TOP_CENTER" layoutY="322.0" prefHeight="407.0" prefWidth="870.0" style="-fx-background-color: #CFD8DC;">
                      <children>
-                        <TableView fx:id="artistTable" prefHeight="406.0" prefWidth="864.0">
+                        <TableView fx:id="artistTable" prefHeight="406.0" prefWidth="725.0">
                            <columns>
-                              <TableColumn fx:id="nameColumn" prefWidth="142.39995270967484" text="Name" />
-                              <TableColumn fx:id="birthdayColumn" prefWidth="137.33334350585938" text="Birthday" />
-                              <TableColumn fx:id="birthplaceColumn" prefWidth="141.8665771484375" text="Birthplace" />
-                              <TableColumn fx:id="nationalityColumn" prefWidth="120.26675415039062" text="Nationality" />
-                              <TableColumn fx:id="artworkListColumn" prefWidth="314.6666259765625" text="Artwork List" />
+                              <TableColumn fx:id="nameColumn" prefWidth="195.99991607666016" text="Name" />
+                              <TableColumn fx:id="birthdayColumn" prefWidth="173.86666870117188" text="Birthday" />
+                              <TableColumn fx:id="birthplaceColumn" prefWidth="202.13339233398438" text="Birthplace" />
+                              <TableColumn fx:id="nationalityColumn" prefWidth="160.0001220703125" text="Nationality" />
                            </columns>
                         </TableView>
                      </children>
@@ -138,7 +137,7 @@
                   </VBox>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="artworkPane" layoutX="-3.0" prefHeight="730.0" prefWidth="875.0" style="-fx-background-color: #546E7A;">
+            <AnchorPane fx:id="artworkPane" layoutX="-3.0" prefHeight="730.0" prefWidth="875.0" style="-fx-background-color: #546E7A;" visible="false">
                <children>
                   <HBox layoutX="1.0" layoutY="348.0" prefHeight="382.0" prefWidth="873.0" spacing="10.0" style="-fx-background-color: #CFD8DC;">
                      <children>
