@@ -34,7 +34,7 @@ public class Artist {
     public String getNationality() { return nationality; }
     public void setNationality(String nationality) { this.nationality = nationality; }
 
-    public String getPhoto() { return photo; } // Getter nou
+    public String getPhoto() { return photo; }
     public void setPhoto(String photo) { this.photo = photo; }
 
     public List<Artwork> getArtworks() { return artworks; }
